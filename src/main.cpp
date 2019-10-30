@@ -1,5 +1,18 @@
 #include "job_scheduler.hpp"
+
 #include <array>
+#include <iostream>
+
+/**
+ * @brief output to cerr any errors from f
+ *
+ * @tparam Callable
+ * @param f
+ */
+template <class Callable> void log_error(Callable &&f) {
+  if (auto e = f())
+    std::cerr << e->what() << std::endl;
+}
 
 /*
  * Test Driver
@@ -21,12 +34,14 @@ int main() { //
 
   do {
     if (insertion_iter != jobs.end()) {
-      try {
-        scheduler.insert_job(*(insertion_iter)++);
-      } catch (SchedulerException &e) {
-        std::cerr << e.what() << std::endl;
-      }
+
+      insertion_iter->promptDescription();
+
+      log_error([&] { return scheduler.insert_next_job(*insertion_iter); });
+
+      ++insertion_iter;
     }
-    scheduler.tick();
+
+    log_error([&] { return scheduler.tick(); });
   } while (scheduler.is_running());
 }

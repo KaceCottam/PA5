@@ -1,6 +1,7 @@
 #ifndef INFINITE_ITERATOR_HPP
 #define INFINITE_ITERATOR_HPP
 
+#include <cmath>
 #include <iostream>
 
 /**
@@ -8,19 +9,40 @@
  *
  * @tparam T
  */
-template <class T = unsigned int> class infinite_iterator {
+template <class T = int> class infinite_iterator {
 public:
   infinite_iterator(const T start = 0) : current{start} {}
 
-  infinite_iterator &operator++() noexcept {
+  infinite_iterator<> &operator++() {
     ++current;
     return *this;
   }
 
-  [[nodiscard]] infinite_iterator operator++(int) noexcept {
+  infinite_iterator<> &operator--() {
+    --current;
+    return *this;
+  }
+
+  [[nodiscard]] infinite_iterator operator++(int) {
     auto temp = *this;
     operator++();
     return temp;
+  }
+
+  [[nodiscard]] infinite_iterator operator--(int) {
+    auto temp = *this;
+    operator--();
+    return temp;
+  }
+
+  infinite_iterator<> &operator+=(const int idx) {
+    current += idx;
+    return *this;
+  }
+
+  infinite_iterator<> &operator-=(const int idx) {
+    current -= idx;
+    return *this;
   }
 
   [[nodiscard]] T operator*() const noexcept { return current; }

@@ -1,8 +1,11 @@
 #ifndef JOB_HPP
 #define JOB_HPP
 
+#include <iostream>
 #include <optional>
 #include <string>
+
+// TODO: Move implementation to cpp
 
 /*
  * Type declarations for more verbose constructors.
@@ -26,6 +29,7 @@ public:
    * @param n_procs
    * @param n_ticks
    * @param id
+   * @param desc
    *
    * @return
    */
@@ -37,6 +41,7 @@ public:
    * @brief Assign ID and/or description to an existing job
    *
    * @param id
+   * @param desc
    * @param other
    */
   Job(JobId id, Description &desc, Job &&other) {
@@ -118,6 +123,24 @@ public:
       stream << ", Description{" << *job.desc << "}";
     }
     return stream << " }";
+  }
+
+  /**
+   * @brief Edit the description of a command IF it doesn't exist already
+   */
+  void promptDescription() {
+    if (!desc)
+      return;
+    std::cout << "Please enter a description for Job";
+    if (id)
+      std::cout << *id;
+    else
+      std::cout << "(U)";
+    std::cout << ": ";
+
+    std::string new_desc;
+    std::getline(std::cin, new_desc);
+    desc = std::move(new_desc);
   }
 
 private:
