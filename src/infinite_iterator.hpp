@@ -1,5 +1,6 @@
 #ifndef INFINITE_ITERATOR_HPP
 #define INFINITE_ITERATOR_HPP
+
 #include <iostream>
 
 /**
@@ -7,12 +8,12 @@
  *
  * @tparam T
  */
-template <class T = int> class infinite_iterator {
+template <class T = unsigned int> class infinite_iterator {
 public:
   infinite_iterator(const T start = 0) : current{start} {}
 
   infinite_iterator &operator++() noexcept {
-    current++;
+    ++current;
     return *this;
   }
 
@@ -30,12 +31,6 @@ public:
 
   [[nodiscard]] explicit operator T() const noexcept { return current; }
   [[nodiscard]] explicit operator T() noexcept { return current; }
-
-  friend std::ostream &operator<<(std::ostream &stream,
-                                  const infinite_iterator<T> &rhs) {
-    stream << static_cast<T>(rhs);
-    return stream;
-  }
 
 private:
   T current;
