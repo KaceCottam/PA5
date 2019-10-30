@@ -18,17 +18,17 @@ template <class Callable> void log_error(Callable &&f) {
  * Test Driver
  */
 int main() { //
-  JobScheduler scheduler{};
-  std::array<Job, 10> jobs = {Job{NProcs{8}, NTicks{10}},  //
-                              Job{NProcs{2}, NTicks{1}},   //
-                              Job{NProcs{12}, NTicks{12}}, //
-                              Job{NProcs{10}, NTicks{2}},  //
-                              Job{NProcs{5}, NTicks{8}},   //
-                              Job{NProcs{4}, NTicks{2}},   //
-                              Job{NProcs{4}, NTicks{6}},   //
-                              Job{NProcs{2}, NTicks{5}},   //
-                              Job{NProcs{4}, NTicks{3}},   //
-                              Job{NProcs{6}, NTicks{2}}};
+  JobScheduler scheduler{5};
+  std::array<Job, 10> jobs = {Job{8, 10},  //
+                              Job{2, 1},   //
+                              Job{12, 12}, //
+                              Job{10, 2},  //
+                              Job{5, 8},   //
+                              Job{4, 2},   //
+                              Job{4, 6},   //
+                              Job{2, 5},   //
+                              Job{4, 3},   //
+                              Job{6, 2}};
 
   auto insertion_iter = jobs.begin();
 

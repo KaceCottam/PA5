@@ -8,13 +8,9 @@
 // TODO: Move implementation to cpp
 
 /*
- * Type declarations for more verbose constructors.
- * Example:
- * auto new_job = Job(NProcs{4}, NTicks{256}, "echo \"Hello world\";")
+ * Type declarations for more accessability
  */
 using JobId = std::optional<unsigned int>;
-using NProcs = unsigned int;
-using NTicks = unsigned int;
 using Description = std::optional<std::string>;
 
 /**
@@ -33,8 +29,8 @@ public:
    *
    * @return
    */
-  Job(const NProcs n_procs, const NTicks n_ticks, const JobId id = {},
-      const Description &desc = {})
+  Job(const unsigned int n_procs, const unsigned int n_ticks,
+      const JobId id = {}, const Description &desc = {})
       : n_procs{n_procs}, n_ticks{n_ticks}, id{id}, desc{desc} {}
 
   /**
@@ -140,12 +136,15 @@ public:
 
     std::string new_desc;
     std::getline(std::cin, new_desc);
+
+    if (desc == "NULL")
+      return;
     desc = std::move(new_desc);
   }
 
 private:
-  NProcs n_procs;
-  NTicks n_ticks;
+  unsigned int n_procs;
+  unsigned int n_ticks;
   JobId id{};
   Description desc{};
 };
