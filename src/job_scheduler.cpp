@@ -25,8 +25,13 @@ JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
 
 [[nodiscard]] optional<SchedulerException>
 JobScheduler::insert_job(std::istream &target) noexcept {
+  // in case end of stream
+  if (target.eof())
+    return {};
+
   std::string desc{};
   unsigned int n_procs, n_ticks;
+
   target >> std::quoted(desc) >> n_procs >> n_ticks;
 
   // skip to end of line
