@@ -65,12 +65,9 @@ public:
    */
   friend std::ostream &operator<<(std::ostream &stream, const Job &job);
 
-  /**
-   * @brief getters
-   *
-   * @return
+  /*
+   * getters
    */
-
   [[nodiscard]] unsigned int get_id() const noexcept;
   [[nodiscard]] unsigned int get_n_procs() const noexcept;
   [[nodiscard]] unsigned int get_n_ticks() const noexcept;
