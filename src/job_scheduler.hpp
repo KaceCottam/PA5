@@ -19,8 +19,9 @@ struct SchedulerException : std::runtime_error {
 
 using std::optional;
 template <class T>
-using MinHeap = std::priority_queue<T, std::vector<T>,
-                                    std::greater<std::vector<T>::value_type>>;
+using MinHeap =
+    std::priority_queue<T, std::vector<T>,
+                        std::greater<typename std::vector<T>::value_type>>;
 
 class JobScheduler {
 public:
@@ -48,7 +49,7 @@ private:
   unsigned int total_processors;
   unsigned int available_processors;
   std::vector<Job> running_jobs; // currently running
-  MinHeap<Job> job_queue; // waiting to run
+  MinHeap<Job> job_queue;        // waiting to run
   std::istream *target;
   infinite_iterator<unsigned int> job_counter{1};
 };
