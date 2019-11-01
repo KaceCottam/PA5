@@ -8,6 +8,10 @@ Job::Job(const Job &copy)
     : id{copy.id}, n_procs{copy.n_procs}, n_ticks{copy.n_ticks},
       desc{copy.desc} {};
 
+Job::Job(Job &&move)
+    : id{std::move(move.id)}, n_procs{std::move(move.n_procs)},
+      n_ticks{std::move(move.n_ticks)}, desc{std::move(move.desc)} {}
+
 Job &Job::operator=(const Job &copy) noexcept {
   id = copy.id;
   n_procs = copy.n_procs;
