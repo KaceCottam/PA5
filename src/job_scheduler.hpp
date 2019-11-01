@@ -45,9 +45,10 @@ private:
     return available_processors;
   }
 
+  unsigned int total_processors;
   unsigned int available_processors;
-  std::vector<Job> running_jobs;
-  MinHeap<Job> job_queue;
+  std::vector<Job> running_jobs; // currently running
+  MinHeap<Job> job_queue; // waiting to run
   std::istream *target;
   infinite_iterator<unsigned int> job_counter{1};
 };
