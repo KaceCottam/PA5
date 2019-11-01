@@ -73,7 +73,7 @@ public:
   [[nodiscard]] unsigned int get_n_ticks() const noexcept;
   [[nodiscard]] std::string get_desc() const noexcept;
 
-  void assign_id(unsigned int &newID);
+  void assign_id(const unsigned int &newID);
 
 private:
   unsigned int id;
