@@ -13,34 +13,34 @@ template <class T = int> class infinite_iterator {
 public:
   infinite_iterator(const T start = 0) : current{start} {}
 
-  infinite_iterator<> &operator++() {
+  infinite_iterator<T> &operator++() {
     ++current;
     return *this;
   }
 
-  infinite_iterator<> &operator--() {
+  infinite_iterator<T> &operator--() {
     --current;
     return *this;
   }
 
-  [[nodiscard]] infinite_iterator operator++(int) {
+  [[nodiscard]] infinite_iterator<T> operator++(int) {
     auto temp = *this;
     operator++();
     return temp;
   }
 
-  [[nodiscard]] infinite_iterator operator--(int) {
+  [[nodiscard]] infinite_iterator<T> operator--(int) {
     auto temp = *this;
     operator--();
     return temp;
   }
 
-  infinite_iterator<> &operator+=(const int idx) {
+  infinite_iterator<T> &operator+=(const int idx) {
     current += idx;
     return *this;
   }
 
-  infinite_iterator<> &operator-=(const int idx) {
+  infinite_iterator<T> &operator-=(const int idx) {
     current -= idx;
     return *this;
   }

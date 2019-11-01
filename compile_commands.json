@@ -14,5 +14,23 @@
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
         "file": "src/main.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Werror",
+            "-Iinclude",
+            "-Isrc",
+            "-o",
+            "bin/tests/TestJob",
+            "tests/TestJob.cpp"
+        ],
+        "directory": "/home/kace/Dev/CPTS223/PA5",
+        "file": "tests/TestJob.cpp"
     }
 ]
