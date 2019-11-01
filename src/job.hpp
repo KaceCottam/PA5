@@ -5,8 +5,6 @@
 #include <optional>
 #include <string>
 
-// TODO: Move implementation to cpp
-
 /*
  * Type declarations for more accessability
  */
@@ -30,8 +28,7 @@ public:
    * @return
    */
   Job(const unsigned int n_procs, const unsigned int n_ticks,
-      const JobId id = {}, const Description &desc = {})
-      : n_procs{n_procs}, n_ticks{n_ticks}, id{id}, desc{desc} {}
+      const JobId id = {}, const Description &desc = {});
 
   /**
    * @brief Assign ID and/or description to an existing job
@@ -40,33 +37,21 @@ public:
    * @param desc
    * @param other
    */
-  Job(JobId id, Description &desc, Job &&other) {
-    *this = std::move(other);
-    if (id) {
-      this->id = *id;
-    }
-    if (desc) {
-      this->desc = *desc;
-    }
-  }
+  Job(const JobId id, const Description &desc, Job &&other);
 
   /**
    * @brief Copy constructor
    *
    * @param copy
    */
-  Job(const Job &copy)
-      : n_procs{copy.n_procs}, n_ticks{copy.n_ticks}, id{copy.id},
-        desc{copy.desc} {}
+  Job(const Job &copy);
 
   /**
    * @brief Move constructor
    *
    * @param other
    */
-  Job(Job &&other)
-      : n_procs{std::move(other.n_procs)}, n_ticks{std::move(other.n_ticks)},
-        id{std::move(other.id)}, desc{std::move(other.desc)} {}
+  Job(Job &&other);
 
   /**
    * @brief Copy operator
@@ -75,13 +60,7 @@ public:
    *
    * @return
    */
-  Job &operator=(const Job &copy) noexcept {
-    n_procs = copy.n_procs;
-    n_ticks = copy.n_ticks;
-    desc = copy.desc;
-    id = copy.id;
-    return *this;
-  }
+  Job &operator=(const Job &copy) noexcept;
 
   /**
    * @brief Move operator
@@ -90,14 +69,7 @@ public:
    *
    * @return
    */
-  Job &operator=(Job &&copy) {
-    *this = copy;
-    copy.n_procs = 0;
-    copy.n_ticks = 0;
-    copy.desc = {};
-    copy.id = {};
-    return *this;
-  }
+  Job &operator=(Job &&copy);
 
   /**
    * @brief Print to ostream operator
@@ -107,40 +79,18 @@ public:
    *
    * @return
    */
-  friend std::ostream &operator<<(std::ostream &stream, const Job &job) {
-    stream << "Job";
-    if (job.id) {
-      stream << *job.id;
-    } else {
-      stream << "(U)";
-    }
-    stream << "{ NProcs{" << job.n_procs << "}, NTicks{" << job.n_ticks << "}";
-    if (job.desc) {
-      stream << ", Description{" << *job.desc << "}";
-    }
-    return stream << " }";
-  }
+  friend std::ostream &operator<<(std::ostream &stream, const Job &job);
 
   /**
    * @brief Edit the description of a command IF it doesn't exist already
+   *
+   * @param ostream
+   * @param istream
+   *
+   * @note parameters are as such in order to allow for testing
    */
-  void promptDescription() {
-    if (!desc)
-      return;
-    std::cout << "Please enter a description for Job";
-    if (id)
-      std::cout << *id;
-    else
-      std::cout << "(U)";
-    std::cout << ": ";
-
-    std::string new_desc;
-    std::getline(std::cin, new_desc);
-
-    if (desc == "NULL")
-      return;
-    desc = std::move(new_desc);
-  }
+  void promptDescription(std::ostream &ostream = std::cout,
+                         std::istream &istream = std::cin);
 
 private:
   unsigned int n_procs;
