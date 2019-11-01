@@ -41,3 +41,8 @@ std::ostream &operator<<(std::ostream &stream, const Job &job) {
 [[nodiscard]] unsigned int Job::get_n_ticks() const noexcept { return n_ticks; };
 
 [[nodiscard]] std::string Job::get_desc() const noexcept { return desc; };
+
+void Job::assign_id(unsigned int &newID)
+{
+  id = newID;
+}
