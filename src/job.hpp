@@ -5,13 +5,13 @@
 #include <string>
 
 /**
- * @brief A job class, holds id (if assigned), number of processors required,
+ * @brief A job class, holds id, number of processors required,
  *        number of ticks required, and a description (the command it runs)
  */
 class Job {
 public:
   /*
-   * @brief Make a job that is possibly unassigned with or without a description
+   * @brief constructor
    *
    * @param id
    * @param n_procs
@@ -69,7 +69,7 @@ private:
   unsigned int id;
   unsigned int n_procs;
   unsigned int n_ticks;
-  unsigned int desc;
+  std::string desc;
 };
 
 #endif // ! JOB_HPP
