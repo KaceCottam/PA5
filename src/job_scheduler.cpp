@@ -1,6 +1,6 @@
 #include "job_scheduler.hpp"
 
-#include <iomanip>
+#include <iomanip> // std::quoted()
 
 [[nodiscard]] optional<SchedulerException>
 JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
@@ -15,8 +15,12 @@ JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
     return SchedulerException("Failed to Insert Job, job required more "
                               "processors than total processors.");
 
-  job_queue.push(Job{(unsigned int)(job_counter++), n_procs, n_ticks, desc});
+  Job j{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
+  job_queue.push(j);
   return {};
+
+  // We do not say what to output, the rest of the program will do that based on
+  // the exception or lack of exception
 }
 
 [[nodiscard]] optional<SchedulerException>
@@ -36,5 +40,8 @@ JobScheduler::insert_job(std::istream &target) noexcept {
     return SchedulerException("Failed to insert job, job needs > 0 ticks");
 
   return insert_job(n_procs, n_ticks, desc);
+
+  // We do not say what to output, the rest of the program will do that based on
+  // the exception or lack of exception
 }
 

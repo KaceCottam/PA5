@@ -18,8 +18,6 @@ struct SchedulerException : std::runtime_error {
   SchedulerException(Args &&... args) : runtime_error{std::forward(args)...} {}
 };
 
-using std::cout;
-using std::endl;
 using std::optional;
 
 template <class T>
