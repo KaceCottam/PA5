@@ -18,6 +18,7 @@ struct SchedulerException : std::runtime_error {
 };
 
 using std::optional;
+
 template <class T>
 using MinHeap =
     std::priority_queue<T, std::vector<T>,
@@ -31,15 +32,18 @@ public:
 
   [[nodiscard]] optional<SchedulerException> tick() noexcept;
 
-  JobScheduler(unsigned int i) : available_processors{i} { assert(i > 0); }
+  JobScheduler(unsigned int num_processors) : total_processors{num_processors} {
+    assert(num_processors > 0);
+  }
 
   [[nodiscard]] optional<SchedulerException> insert_job(const Job &j) noexcept;
 
 private:
-  void set_available_processors(const int increment) noexcept {
+  bool set_available_processors(const int increment) noexcept {
     if (available_processors + increment < 0)
-      return;
+      return false;
     available_processors += increment;
+    return true;
   }
 
   [[nodiscard]] unsigned int get_available_processors() const noexcept {
@@ -47,10 +51,10 @@ private:
   }
 
   unsigned int total_processors;
-  unsigned int available_processors;
-  std::vector<Job> running_jobs; // currently running
-  MinHeap<Job> job_queue;        // waiting to run
-  std::istream *target;
+  unsigned int available_processors{total_processors};
+  std::vector<Job> running_jobs{}; // currently running
+  MinHeap<Job> job_queue{};        // waiting to run
+  std::istream *target{};
   infinite_iterator<unsigned int> job_counter{1};
 };
 #endif // ! JOB_SCHEDULER_HPP
