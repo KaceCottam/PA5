@@ -32,6 +32,9 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   // skip to end of line
   target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+  // we could add something to show the current job it is adding where the error
+  // occurred. it would likely be done in the constructor for
+  // SchedulerException.
   if (desc == "NULL")
     return SchedulerException("No job inserted: Desc is \"NULL\"");
   if (n_procs == 0)
@@ -44,4 +47,3 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   // We do not say what to output, the rest of the program will do that based on
   // the exception or lack of exception
 }
-
