@@ -5,11 +5,11 @@
 #include "job.hpp"
 
 #include <cassert>
+#include <iostream>
 #include <optional>
 #include <queue>
 #include <stdexcept>
 #include <vector>
-#include <iostream>
 
 // TODO: move implementation to cpp
 
@@ -18,9 +18,9 @@ struct SchedulerException : std::runtime_error {
   SchedulerException(Args &&... args) : runtime_error{std::forward(args)...} {}
 };
 
-using std::optional;
 using std::cout;
 using std::endl;
+using std::optional;
 
 template <class T>
 using MinHeap =
@@ -29,7 +29,7 @@ using MinHeap =
 
 class JobScheduler {
 public:
-  void set_target(std::istream &target) noexcept;
+  void set_target(std::istream &target) noexcept { this->target = &target; }
 
   [[nodiscard]] bool is_running() noexcept;
 
@@ -39,9 +39,19 @@ public:
     assert(num_processors > 0);
   }
 
-  [[nodiscard]] optional<SchedulerException> insert_job(Job &j) noexcept;
+  [[nodiscard]] optional<SchedulerException>
+  insert_job(const unsigned int n_procs, const unsigned int n_ticks,
+             const std::string &desc) noexcept;
+
+  [[nodiscard]] optional<SchedulerException>
+  insert_job(std::istream &target) noexcept;
 
 private:
+  [[nodiscard]] std::istream &get_target() const noexcept {
+    assert(target != nullptr);
+    return *target;
+  }
+
   bool set_available_processors(const int increment) noexcept {
     if (available_processors + increment < 0)
       return false;
