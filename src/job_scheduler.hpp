@@ -9,6 +9,7 @@
 #include <queue>
 #include <stdexcept>
 #include <vector>
+#include <iostream>
 
 // TODO: move implementation to cpp
 
@@ -18,6 +19,8 @@ struct SchedulerException : std::runtime_error {
 };
 
 using std::optional;
+using std::cout;
+using std::endl;
 
 template <class T>
 using MinHeap =
@@ -36,7 +39,7 @@ public:
     assert(num_processors > 0);
   }
 
-  [[nodiscard]] optional<SchedulerException> insert_job(const Job &j) noexcept;
+  [[nodiscard]] optional<SchedulerException> insert_job(Job &j) noexcept;
 
 private:
   bool set_available_processors(const int increment) noexcept {
