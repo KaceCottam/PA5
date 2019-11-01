@@ -2,14 +2,7 @@
 #define JOB_HPP
 
 #include <iostream>
-#include <optional>
 #include <string>
-
-/*
- * Type declarations for more accessability
- */
-using JobId = std::optional<unsigned int>;
-using Description = std::optional<std::string>;
 
 /**
  * @brief A job class, holds id (if assigned), number of processors required,
@@ -20,24 +13,15 @@ public:
   /*
    * @brief Make a job that is possibly unassigned with or without a description
    *
+   * @param id
    * @param n_procs
    * @param n_ticks
-   * @param id
    * @param desc
    *
    * @return
    */
-  Job(const unsigned int n_procs, const unsigned int n_ticks,
-      const JobId id = {}, const Description &desc = {});
-
-  /**
-   * @brief Assign ID and/or description to an existing job
-   *
-   * @param id
-   * @param desc
-   * @param other
-   */
-  Job(const JobId id, const Description &desc, Job &&other);
+  Job(const unsigned int id, const unsigned int n_procs,
+      const unsigned int n_ticks, const std::string &desc);
 
   /**
    * @brief Copy constructor
@@ -81,22 +65,11 @@ public:
    */
   friend std::ostream &operator<<(std::ostream &stream, const Job &job);
 
-  /**
-   * @brief Edit the description of a command IF it doesn't exist already
-   *
-   * @param ostream
-   * @param istream
-   *
-   * @note parameters are as such in order to allow for testing
-   */
-  void promptDescription(std::ostream &ostream = std::cout,
-                         std::istream &istream = std::cin);
-
 private:
+  unsigned int id;
   unsigned int n_procs;
   unsigned int n_ticks;
-  JobId id{};
-  Description desc{};
+  unsigned int desc;
 };
 
 #endif // ! JOB_HPP
