@@ -20,13 +20,10 @@ template <class Callable> void log_error(Callable &&f) {
  * Test Driver
  */
 int main(int argc, char *argv[]) {
-  // start a job with 5 processors
-  JobScheduler scheduler{5};
-
   if (argc == 2) {
     auto file = std::ifstream(argv[1]);
 
-    scheduler.set_target(file);
+    JobScheduler scheduler(file, 10);
 
     while (scheduler.is_running())
       log_error([&] { return scheduler.tick(); });
@@ -34,6 +31,7 @@ int main(int argc, char *argv[]) {
   } else {
     std::cout << "Enter a list of jobs, ending with EOF, separating with \\n."
               << std::endl;
+
     std::stringstream input{};
     std::string next_input{};
     while (true) {
@@ -43,7 +41,7 @@ int main(int argc, char *argv[]) {
       input << next_input << " ";
     }
 
-    scheduler.set_target(input);
+    JobScheduler scheduler(input, 10);
 
     while (scheduler.is_running())
       log_error([&] { return scheduler.tick(); });

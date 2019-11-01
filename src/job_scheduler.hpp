@@ -20,31 +20,34 @@ struct SchedulerException : std::runtime_error {
 
 using std::optional;
 
-template <class T>
-using MinHeap =
-    std::priority_queue<T, std::vector<T>,
-                        std::greater<typename std::vector<T>::value_type>>;
-
 class JobScheduler {
 public:
-  void set_target(std::istream &target) noexcept { this->target = &target; }
+  JobScheduler(std::istream &target, unsigned int num_processors)
+      : total_processors{num_processors}, target{&target} {
+    assert(num_processors > 0);
+  }
+
+  [[maybe_unused]] void set_target(std::istream &target) noexcept {
+    this->target = &target;
+  }
 
   [[nodiscard]] bool is_running() noexcept;
 
   [[nodiscard]] optional<SchedulerException> tick() noexcept;
 
-  JobScheduler(unsigned int num_processors) : total_processors{num_processors} {
-    assert(num_processors > 0);
-  }
+private:
+  template <class T>
+  using MinHeap =
+      std::priority_queue<T, std::vector<T>,
+                          std::greater<typename std::vector<T>::value_type>>;
+
+  [[nodiscard]] optional<SchedulerException>
+  insert_job(std::istream &target) noexcept;
 
   [[nodiscard]] optional<SchedulerException>
   insert_job(const unsigned int n_procs, const unsigned int n_ticks,
              const std::string &desc) noexcept;
 
-  [[nodiscard]] optional<SchedulerException>
-  insert_job(std::istream &target) noexcept;
-
-private:
   [[nodiscard]] std::istream &get_target() const noexcept {
     assert(target != nullptr);
     return *target;
@@ -65,7 +68,7 @@ private:
   unsigned int available_processors{total_processors};
   std::vector<Job> running_jobs{}; // currently running
   MinHeap<Job> job_queue{};        // waiting to run
-  std::istream *target{};
+  std::istream *target;            // pointer because of abstraction
   infinite_iterator<unsigned int> job_counter{1};
 };
 #endif // ! JOB_SCHEDULER_HPP
