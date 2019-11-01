@@ -107,3 +107,37 @@ TEMPLATE_TEST_CASE("Infinite iterators can be many types", "", int, float,
   REQUIRE((TestType)(++alpha) == (TestType)initial + 1);
   REQUIRE((TestType)(alpha -= 2) == (TestType)initial - 1);
 }
+TEST_CASE("Infinite iterators can be copied and moved") {
+  auto initial = GENERATE(take(100, random(-1000000, 1000000)));
+  infinite_iterator alpha{initial};
+
+  SECTION("...by operator") {
+    infinite_iterator beta{};
+
+    REQUIRE((int)alpha == initial);
+    REQUIRE((int)beta == 0);
+
+    SECTION("Copy") {
+      beta = alpha;
+      REQUIRE((int)alpha == initial);
+      REQUIRE((int)beta == initial);
+    }
+    SECTION("Move") {
+      beta = std::move(alpha);
+      REQUIRE((int)beta == std::move(initial));
+      REQUIRE((int)alpha == initial);
+    }
+  }
+  SECTION("...by constructor") {
+    SECTION("Copy") {
+      infinite_iterator beta{alpha};
+      REQUIRE((int)alpha == initial);
+      REQUIRE((int)beta == initial);
+    }
+    SECTION("Move") {
+      infinite_iterator beta{std::move(alpha)};
+      REQUIRE((int)beta == std::move(initial));
+      REQUIRE((int)alpha == initial);
+    }
+  }
+}
