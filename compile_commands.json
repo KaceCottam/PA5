@@ -8,6 +8,38 @@
             "-Wextra",
             "-Wpedantic",
             "-Werror",
+            "-o",
+            "build/job_scheduler.o",
+            "src/job_scheduler.cpp"
+        ],
+        "directory": "/home/kace/Dev/CPTS223/PA5",
+        "file": "src/job_scheduler.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Werror",
+            "-o",
+            "build/main.o",
+            "src/main.cpp"
+        ],
+        "directory": "/home/kace/Dev/CPTS223/PA5",
+        "file": "src/main.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Werror",
             "-Iinclude",
             "-Isrc",
             "-o",
@@ -32,21 +64,5 @@
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
         "file": "src/job.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-std=c++17",
-            "-Wall",
-            "-Wextra",
-            "-Wpedantic",
-            "-Werror",
-            "-o",
-            "build/main.o",
-            "src/main.cpp"
-        ],
-        "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "src/main.cpp"
     }
 ]
