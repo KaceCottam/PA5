@@ -34,10 +34,6 @@ std::ostream &operator<<(std::ostream &stream, const Job &job) {
 }
 
 // getters
-unsigned int Job::get_id() const{
-  return id;
-}
+[[nodiscard]] unsigned int Job::get_id() const noexcept { return id; }
 
-unsigned int Job::get_n_procs() const{
-  
-}
+[[nodiscard]] unsigned int Job::get_n_procs() const noexcept {}
