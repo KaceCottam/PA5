@@ -65,6 +65,17 @@ public:
    */
   friend std::ostream &operator<<(std::ostream &stream, const Job &job);
 
+    /**
+   * @brief getters
+   *
+   * @return
+   */
+
+  unsigned int get_id() const;
+  unsigned int get_n_procs() const;
+  unsigned int get_n_ticks() const;
+  std::string get_desc() const;
+
 private:
   unsigned int id;
   unsigned int n_procs;

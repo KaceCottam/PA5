@@ -28,3 +28,12 @@ std::ostream &operator<<(std::ostream &stream, const Job &job) {
   return stream << "Job" << job.id << "{ NProcs{" << job.n_procs << "}, NTicks{"
                 << job.n_ticks << "}, Description{" << job.desc << "} }";
 }
+
+// getters
+unsigned int Job::get_id() const{
+  return id;
+}
+
+unsigned int Job::get_n_procs() const{
+  
+}
