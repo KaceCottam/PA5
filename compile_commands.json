@@ -8,12 +8,14 @@
             "-Wextra",
             "-Wpedantic",
             "-Werror",
+            "-Iinclude",
+            "-Isrc",
             "-o",
-            "build/main.o",
-            "src/main.cpp"
+            "bin/tests/infinite_iterator",
+            "tests/infinite_iterator.cpp"
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "src/main.cpp"
+        "file": "tests/infinite_iterator.cpp"
     },
     {
         "arguments": [
@@ -24,13 +26,27 @@
             "-Wextra",
             "-Wpedantic",
             "-Werror",
-            "-Iinclude",
-            "-Isrc",
             "-o",
-            "bin/tests/TestJob",
-            "tests/TestJob.cpp"
+            "build/job.o",
+            "src/job.cpp"
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "tests/TestJob.cpp"
+        "file": "src/job.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Werror",
+            "-o",
+            "build/main.o",
+            "src/main.cpp"
+        ],
+        "directory": "/home/kace/Dev/CPTS223/PA5",
+        "file": "src/main.cpp"
     }
 ]

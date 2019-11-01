@@ -41,7 +41,7 @@ tests: ${TEST_BINS}
 
 ${TEST_BINDIR}/%: ${TESTDIR}/%.cpp ${INCDIR}/catch.hpp ${HEADS}
 	@mkdir -pv ${TEST_BINDIR}
-	@echo "Compiling $@ with ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES}..."
+	@echo "Linking and Compiling $@ with ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES}..."
 	@${CXX} ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES} -o $@ $<
 	@echo "...Done"
 
@@ -66,7 +66,7 @@ ${OBJDIR}/%.o: ${SRCDIR}/%.cpp
 
 ${BINDIR}/${EXEC}: ${OBJS} ${HEADS}
 	@mkdir -pv ${BINDIR}
-	@echo "Compiling $@ with ${CXXFLAGS} ${LINKING_ARGS}..."
+	@echo "Linking $@ with ${CXXFLAGS} ${LINKING_ARGS}..."
 	@${CXX} ${CXXFLAGS} ${LINKING_ARGS} -o $@ $^
 	@echo "...Done"
 
