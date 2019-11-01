@@ -1,6 +1,6 @@
 #include "job_scheduler.hpp"
 
-#include <array>
+#include <fstream>
 #include <iostream>
 
 /**
@@ -17,31 +17,14 @@ template <class Callable> void log_error(Callable &&f) {
 /*
  * Test Driver
  */
-int main() { //
+int main(int argc, char *argv[]) {
+  // start a job with 5 processors
   JobScheduler scheduler{5};
-  std::array<Job, 10> jobs = {Job{8, 10},  //
-                              Job{2, 1},   //
-                              Job{12, 12}, //
-                              Job{10, 2},  //
-                              Job{5, 8},   //
-                              Job{4, 2},   //
-                              Job{4, 6},   //
-                              Job{2, 5},   //
-                              Job{4, 3},   //
-                              Job{6, 2}};
 
-  auto insertion_iter = jobs.begin();
+  if (argc == 1) {
+    std::cerr << "Usage: PA5 {target file}" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-  do {
-    if (insertion_iter != jobs.end()) {
-
-      insertion_iter->promptDescription();
-
-      log_error([&] { return scheduler.insert_next_job(*insertion_iter); });
-
-      ++insertion_iter;
-    }
-
-    log_error([&] { return scheduler.tick(); });
-  } while (scheduler.is_running());
+  scheduler.set_target(std::ifstream(argv[1]));
 }
