@@ -73,6 +73,11 @@ public:
   [[nodiscard]] unsigned int get_n_ticks() const noexcept;
   [[nodiscard]] std::string get_desc() const noexcept;
 
+  /*
+   * setters
+   */
+  void set_n_ticks(int new_n_ticks);
+
 private:
   unsigned int id;
   unsigned int n_procs;

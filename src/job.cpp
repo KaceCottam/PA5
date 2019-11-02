@@ -44,3 +44,8 @@ std::ostream &operator<<(std::ostream &stream, const Job &job) {
 };
 
 [[nodiscard]] std::string Job::get_desc() const noexcept { return desc; };
+
+void Job::set_n_ticks(int new_n_ticks)
+{
+  n_ticks = new_n_ticks;
+}

@@ -64,6 +64,12 @@ private:
     return available_processors;
   }
 
+  Job find_shortest() const;
+  bool check_availability(int &procs_needed);
+  Job &delete_shortest();
+  void run_job(Job &new_job);
+  void decrement_timer();
+
   unsigned int total_processors;
   unsigned int available_processors{total_processors};
   std::vector<Job> running_jobs{}; // currently running

@@ -52,3 +52,37 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   // We do not say what to output, the rest of the program will do that based on
   // the exception or lack of exception
 }
+
+Job JobScheduler::find_shortest() const
+{
+  return job_queue.top();
+}
+
+bool JobScheduler::check_availability(int &procs_needed)
+{
+  return (available_processors >= procs_needed);
+}
+
+Job &JobScheduler::delete_shortest()
+{
+  Job temp = job_queue.top();
+  job_queue.pop();
+  return temp;
+}
+
+void JobScheduler::run_job(Job &new_job)
+{
+  // decrement available processors
+  set_available_processors(new_job.get_n_procs * -1);
+
+  // add to the vector of running jobs
+  running_jobs.push_back(new_job);
+}
+
+void JobScheduler::decrement_timer()
+{
+  for (int i = 0; i < running_jobs.size(); i++)
+  {
+    running_jobs[i].set_n_ticks(running_jobs[i].get_n_ticks() - 1);
+  }
+}
