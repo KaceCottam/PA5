@@ -32,17 +32,21 @@ int main(int argc, char *argv[]) {
     } while (scheduler.is_running());
 
   } else {
-    std::cout << "Enter a list of jobs, ending with EOF, separating with \\n."
+    std::cout << "Enter a list of jobs, ending with EOF, separating with \\n.\n"
+              << "Currently there are " << N_PROCESSORS << " available."
               << std::endl;
 
     std::stringstream input{};
     std::string next_input{};
     while (true) {
+      if (std::cin.peek() == '\n')
+        input << '\n';
       std::cin >> next_input;
       if (next_input == "EOF")
         break;
       input << next_input << " ";
     }
+    std::clog << input.str();
 
     JobScheduler scheduler(input, N_PROCESSORS);
 
