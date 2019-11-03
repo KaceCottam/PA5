@@ -46,12 +46,12 @@ help:
 	@printf "%5s %-10s\t-- %s\n" "" "LINKING_ARGS" "options to be used while LINKING"
 	@printf "%5s %-10s\t-- %s\n" "" "DEBUG_COMMAND" "the command to be used when debugging make variables"
 
-tests: ${TEST_BINS}
+tests: ${INCDIR}/catch.hpp ${TEST_BINS}
 
-${TEST_BINDIR}/%: ${TESTDIR}/%.cpp ${INCDIR}/catch.hpp ${HEADS}
+${TEST_BINDIR}/%: ${TESTDIR}/%.cpp ${SRCDIR}/%.hpp ${SRCDIR}/%.cpp
 	@mkdir -pv ${TEST_BINDIR}
 	@echo "Linking and Compiling $@ with ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES}..."
-	@${CXX} ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES} -o $@ $<
+	@${CXX} ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES} -o $@ $^
 	@echo "...Done"
 
 report: ${PANDOC_OUTPUT}

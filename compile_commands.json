@@ -8,6 +8,42 @@
             "-Wextra",
             "-Wpedantic",
             "-Werror",
+            "-Iinclude",
+            "-Isrc",
+            "-o",
+            "bin/tests/infinite_iterator",
+            "tests/infinite_iterator.cpp"
+        ],
+        "directory": "/home/kace/Dev/CPTS223/PA5",
+        "file": "tests/infinite_iterator.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Werror",
+            "-Iinclude",
+            "-Isrc",
+            "-o",
+            "bin/tests/job",
+            "tests/job.cpp"
+        ],
+        "directory": "/home/kace/Dev/CPTS223/PA5",
+        "file": "tests/job.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Werror",
             "-o",
             "build/job_scheduler.o",
             "src/job_scheduler.cpp"
@@ -30,24 +66,6 @@
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
         "file": "src/main.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-std=c++17",
-            "-Wall",
-            "-Wextra",
-            "-Wpedantic",
-            "-Werror",
-            "-Iinclude",
-            "-Isrc",
-            "-o",
-            "bin/tests/infinite_iterator",
-            "tests/infinite_iterator.cpp"
-        ],
-        "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "tests/infinite_iterator.cpp"
     },
     {
         "arguments": [
