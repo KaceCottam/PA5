@@ -49,4 +49,4 @@ bool operator<=(const Job &lhs, const Job &rhs) noexcept {
   return lhs.n_ticks <= rhs.n_ticks;
 }
 
-unsigned int Job::get_n_procs() const noexcept { return n_procs; }
+[[nodiscard]] unsigned int Job::get_n_procs() const noexcept { return n_procs; }

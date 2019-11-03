@@ -30,26 +30,23 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
   if (auto e = insert_job(get_target()))
     return e;
 
-  // decrement all running_jobs and free procs if necessary
+  // TODO
+  // compose decement_timer + free_proc_if_necessary
   for (auto &i : running_jobs) {
     if (--i.n_ticks <= 0) // finished running
       free_proc(i);
   }
 
   // find next shortest job and see if we can start it
-  do {
-    auto available_procs = get_available_processors();
-    auto new_assignment = job_queue.top();
-    if (new_assignment.get_n_procs() <= available_procs.size()) {
-      job_queue.pop();
-      running_jobs.push_back(new_assignment);
-      auto job = std::make_shared<Job>(std::move(new_assignment));
-      for (auto i = 0U; i < new_assignment.get_n_procs(); ++i) {
-        processors[available_procs[i]] = job;
-      }
+  while (true) {
+    if (auto next_job = find_shortest()) {
+      if (check_availability(next_job->get_n_procs()))
+        run_job(pop_shortest());
+      else
+        break;
     } else
       break;
-  } while (true);
+  }
   return {};
 }
 
@@ -132,4 +129,42 @@ void JobScheduler::free_proc(const Job &j) noexcept {
                    [&j](auto i) { return i.get() == &j; })) = nullptr;
   }
   running_jobs.erase(job_iter);
+}
+
+[[nodiscard]] bool
+JobScheduler::check_availability(unsigned int procs_needed) noexcept {
+  // assume >= 1 procs_needed
+  assert(procs_needed > 0);
+
+  return procs_needed <= get_available_processors().size();
+}
+
+[[nodiscard]] optional<Job> JobScheduler::find_shortest() const noexcept {
+  if (job_queue.size() == 0)
+    return {};
+  return job_queue.top();
+}
+
+[[nodiscard]] Job JobScheduler::pop_shortest() noexcept {
+  // assume job_queue has >= 1 element
+  assert(job_queue.size() > 0);
+  // assume find_shortest() yields a job
+  auto new_job = find_shortest();
+  assert(new_job);
+
+  Job temp = *new_job;
+  job_queue.pop();
+  return temp;
+}
+
+void JobScheduler::run_job(Job new_job) noexcept {
+  // add to the vector of running jobs
+  running_jobs.push_back(new_job);
+
+  // assign processors
+  auto available_procs = get_available_processors();
+  auto job = std::make_shared<Job>(std::move(new_job));
+  for (auto i = 0U; i < new_job.get_n_procs(); ++i) {
+    processors[available_procs[i]] = job;
+  }
 }

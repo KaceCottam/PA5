@@ -45,6 +45,17 @@ private:
 
   void free_proc(const Job &j) noexcept;
 
+  [[nodiscard]] bool
+  check_availability(const unsigned int procs_needed) noexcept;
+
+  [[nodiscard]] optional<Job> find_shortest() const noexcept;
+  [[nodiscard]] bool check_availability(int &procs_needed);
+  [[nodiscard]] Job pop_shortest() noexcept;
+  void run_job(Job new_job) noexcept;
+
+  // TODO use in tick()
+  [[maybe_unused]] void decrement_timer() noexcept;
+
   std::istream *target;     // pointer because of abstraction
   MinHeap<Job> job_queue{}; // waiting to run
   std::vector<std::shared_ptr<Job>> processors{}; // all processors

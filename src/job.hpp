@@ -76,7 +76,7 @@ public:
   friend bool operator>=(const Job &lhs, const Job &rhs) noexcept;
   friend bool operator<=(const Job &lhs, const Job &rhs) noexcept;
 
-  unsigned int get_n_procs() const noexcept;
+  [[nodiscard]] unsigned int get_n_procs() const noexcept;
   unsigned int n_ticks;
 
 private:
