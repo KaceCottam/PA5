@@ -32,9 +32,11 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
   // Display current tick
   cout << "Tick Number " << tick_num++ << endl;
 
+  optional<SchedulerException> retval;
+
+  // TODO if problem -> doesnt tick!
   // prompt and insert new job
-  if (auto e = insert_job(get_target()))
-    return e;
+  retval = insert_job(get_target());
 
   decrement_timer();
   while (true) {
@@ -59,7 +61,7 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
 
   cout << endl;
 
-  return {};
+  return retval;
 }
 
 [[nodiscard]] optional<SchedulerException>
@@ -113,6 +115,9 @@ JobScheduler::insert_job(std::istream &target) noexcept {
     // skip to end of line
     target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return SchedulerException("No job inserted: Desc is \"NULL\"");
+  }
+  if (desc == "") {
+    return {};
   }
   target >> n_procs;
   if (n_procs == 0) {

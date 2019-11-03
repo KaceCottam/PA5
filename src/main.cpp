@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-#define N_PROCESSORS 15
+#define N_PROCESSORS 20
 
 /**
  * @brief output to cerr any errors from f
