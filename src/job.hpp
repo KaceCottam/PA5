@@ -7,6 +7,8 @@
 /**
  * @brief A job class, holds id, number of processors required,
  *        number of ticks required, and a description (the command it runs)
+ *
+ *        A struct because everything should be visible by default
  */
 class Job {
 public:
@@ -53,7 +55,7 @@ public:
    *
    * @return
    */
-  Job &operator=(Job &&copy);
+  Job &operator=(Job &&move);
 
   /**
    * @brief Print to ostream operator
@@ -66,17 +68,20 @@ public:
   friend std::ostream &operator<<(std::ostream &stream, const Job &job);
 
   /*
-   * getters
+   * Comparison operators
    */
-  [[nodiscard]] unsigned int get_id() const noexcept;
-  [[nodiscard]] unsigned int get_n_procs() const noexcept;
-  [[nodiscard]] unsigned int get_n_ticks() const noexcept;
-  [[nodiscard]] std::string get_desc() const noexcept;
+  friend bool operator<(const Job &lhs, const Job &rhs) noexcept;
+  friend bool operator>(const Job &lhs, const Job &rhs) noexcept;
+  friend bool operator==(const Job &lhs, const Job &rhs) noexcept;
+  friend bool operator>=(const Job &lhs, const Job &rhs) noexcept;
+  friend bool operator<=(const Job &lhs, const Job &rhs) noexcept;
+
+  unsigned int get_n_procs() const noexcept;
+  unsigned int n_ticks;
 
 private:
   unsigned int id;
   unsigned int n_procs;
-  unsigned int n_ticks;
   std::string desc;
 };
 

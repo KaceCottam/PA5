@@ -20,6 +20,15 @@ PANDOC_OUTPUT := "Report.pdf"
 
 EXEC          := PA5
 
+ifeq "${DEBUG}" "1"
+	COMPILE_ARGS        += -g
+	LINKING_ARGS        += -g
+endif
+ifeq "${VERBOSE}" "1"
+	COMPILE_ARGS        += -v
+	LINKING_ARGS        += -v
+endif
+
 .PHONY: help clean DEBUG_MAKE
 help:
 	@echo "Usage: make <options> [<optional_arg>=<value>] ...}"

@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
       input << next_input << " ";
     }
 
-    JobScheduler scheduler(input, 10);
+    JobScheduler scheduler(input, 15);
 
     while (scheduler.is_running())
       log_error([&] { return scheduler.tick(); });

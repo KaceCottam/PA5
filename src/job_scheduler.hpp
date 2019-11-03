@@ -4,32 +4,23 @@
 #include "infinite_iterator.hpp"
 #include "job.hpp"
 
-#include <cassert>
-#include <iostream>
-#include <optional>
-#include <queue>
-#include <stdexcept>
-#include <vector>
-
-// TODO: move implementation to cpp
+#include <iostream> // std::istream
+#include <memory>   // std::shared_prt<>
+#include <optional> // std::optional<>
+#include <queue>    // std::priority_queue<>
 
 struct SchedulerException : std::runtime_error {
-  template <class... Args>
-  SchedulerException(Args &&... args) : runtime_error{std::forward(args)...} {}
+  template <class... Args> SchedulerException(Args &&... args);
 };
 
 using std::optional;
+using index = unsigned int;
 
 class JobScheduler {
 public:
-  JobScheduler(std::istream &target, unsigned int num_processors)
-      : total_processors{num_processors}, target{&target} {
-    assert(num_processors > 0);
-  }
+  JobScheduler(std::istream &target, unsigned int num_processors);
 
-  [[maybe_unused]] void set_target(std::istream &target) noexcept {
-    this->target = &target;
-  }
+  [[maybe_unused]] void set_target(std::istream &target) noexcept;
 
   [[nodiscard]] bool is_running() noexcept;
 
@@ -48,27 +39,16 @@ private:
   insert_job(const unsigned int n_procs, const unsigned int n_ticks,
              const std::string &desc) noexcept;
 
-  [[nodiscard]] std::istream &get_target() const noexcept {
-    assert(target != nullptr);
-    return *target;
-  }
+  [[nodiscard]] std::istream &get_target() const noexcept;
 
-  bool set_available_processors(const int increment) noexcept {
-    if (available_processors + increment < 0)
-      return false;
-    available_processors += increment;
-    return true;
-  }
+  [[nodiscard]] std::vector<index> get_available_processors() const noexcept;
 
-  [[nodiscard]] unsigned int get_available_processors() const noexcept {
-    return available_processors;
-  }
+  void free_proc(const Job &j) noexcept;
 
-  unsigned int total_processors;
-  unsigned int available_processors{total_processors};
-  std::vector<Job> running_jobs{}; // currently running
-  MinHeap<Job> job_queue{};        // waiting to run
-  std::istream *target;            // pointer because of abstraction
+  std::istream *target;     // pointer because of abstraction
+  MinHeap<Job> job_queue{}; // waiting to run
+  std::vector<std::shared_ptr<Job>> processors{}; // all processors
+  std::vector<Job> running_jobs{};                // running jobs
   infinite_iterator<unsigned int> job_counter{1};
 };
 #endif // ! JOB_SCHEDULER_HPP

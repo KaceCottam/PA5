@@ -2,15 +2,15 @@
 
 Job::Job(unsigned int id, unsigned int n_procs, unsigned int n_ticks,
          const std::string &desc)
-    : id{id}, n_procs{n_procs}, n_ticks{n_ticks}, desc{desc} {}
+    : n_ticks{n_ticks}, id{id}, n_procs{n_procs}, desc{desc} {}
 
 Job::Job(const Job &copy)
-    : id{copy.id}, n_procs{copy.n_procs}, n_ticks{copy.n_ticks},
-      desc{copy.desc} {};
+    : n_ticks{copy.n_ticks}, id{copy.id}, n_procs{copy.n_procs},
+      desc{copy.desc} {}
 
 Job::Job(Job &&move)
-    : id{std::move(move.id)}, n_procs{std::move(move.n_procs)},
-      n_ticks{std::move(move.n_ticks)}, desc{std::move(move.desc)} {}
+    : n_ticks{std::move(move.n_ticks)}, id{std::move(move.id)},
+      n_procs{std::move(move.n_procs)}, desc{std::move(move.desc)} {}
 
 Job &Job::operator=(const Job &copy) noexcept {
   id = copy.id;
@@ -33,14 +33,20 @@ std::ostream &operator<<(std::ostream &stream, const Job &job) {
                 << job.n_ticks << "}, Description{" << job.desc << "} }";
 }
 
-[[nodiscard]] unsigned int Job::get_id() const noexcept { return id; }
+bool operator<(const Job &lhs, const Job &rhs) noexcept {
+  return lhs.n_ticks < rhs.n_ticks;
+}
+bool operator>(const Job &lhs, const Job &rhs) noexcept {
+  return lhs.n_ticks > rhs.n_ticks;
+}
+bool operator==(const Job &lhs, const Job &rhs) noexcept {
+  return lhs.n_ticks == rhs.n_ticks;
+}
+bool operator>=(const Job &lhs, const Job &rhs) noexcept {
+  return lhs.n_ticks >= rhs.n_ticks;
+}
+bool operator<=(const Job &lhs, const Job &rhs) noexcept {
+  return lhs.n_ticks <= rhs.n_ticks;
+}
 
-[[nodiscard]] unsigned int Job::get_n_procs() const noexcept {
-  return n_procs;
-};
-
-[[nodiscard]] unsigned int Job::get_n_ticks() const noexcept {
-  return n_ticks;
-};
-
-[[nodiscard]] std::string Job::get_desc() const noexcept { return desc; };
+unsigned int Job::get_n_procs() const noexcept { return n_procs; }
