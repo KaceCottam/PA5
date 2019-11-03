@@ -22,24 +22,28 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
 
 [[nodiscard]] bool JobScheduler::is_running() noexcept {
   // if all processors dont have a job (=nullptr), nothing is running
-  return std::count(processors.begin(), processors.end(), nullptr) ==
-         (int)processors.size();
+  return std::count_if(processors.begin(), processors.end(), [](auto i) {
+           return i.get() == nullptr;
+         }) != (int)processors.size();
 }
 
 [[nodiscard]] optional<SchedulerException> JobScheduler::tick() noexcept {
-  
+
   // Display current tick
-  cout << "Tick Number " << tick_num << endl;
-  
+  cout << "Tick Number " << tick_num++ << endl;
+
   // prompt and insert new job
   if (auto e = insert_job(get_target()))
     return e;
 
-  // TODO
-  // compose decement_timer + free_proc_if_necessary
-  for (auto &i : running_jobs) {
-    if (--i.n_ticks <= 0) // finished running
-      free_proc(i);
+  decrement_timer();
+  while (true) {
+    auto done_job = std::find_if(running_jobs.begin(), running_jobs.end(),
+                                 [](auto i) { return i->n_ticks <= 0; });
+    if (done_job != running_jobs.end())
+      free_proc(*done_job);
+    else
+      break;
   }
 
   // find next shortest job and see if we can start it
@@ -66,26 +70,25 @@ JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
   assert(n_ticks != 0);
   assert(desc != "NULL");
 
+  // we have output handled with SchedulerException::what()
+
   // Check validity of the job
-  if (n_procs > processors.size()){
-    cout << "Failed to insert job, job needs > 0 processors" << endl;
+  if (n_procs > processors.size()) {
+    // cout << "Failed to insert job, job needs > 0 processors" << endl;
     return SchedulerException("Failed to Insert Job, job required more "
                               "processors than total processors.");
-  }
-  else if(n_ticks == 0){
-    cout << "Failed to insert job, job needs > 0 ticks" << endl;
+  } else if (n_ticks == 0) {
+    // cout << "Failed to insert job, job needs > 0 ticks" << endl;
     return SchedulerException("Failed to insert job, job needs > 0 ticks");
-  }
-  else if(desc == "NULL"){
-    cout << "No job inserted: Desc is \"NULL\"" << endl;
+  } else if (desc == "NULL") {
+    // cout << "No job inserted: Desc is \"NULL\"" << endl;
     return SchedulerException("No job inserted: Desc is \"NULL\"");
   }
-
 
   Job j{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
   job_queue.push(j);
 
-  cout << "Job Started: " << j << endl;
+  cout << "Inserted job: " << j << endl;
 
   return {};
 
@@ -102,26 +105,29 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   std::string desc{};
   unsigned int n_procs, n_ticks;
 
-  target >> std::quoted(desc) >> n_procs >> n_ticks;
-
-  // skip to end of line
-  target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
   // we could add something to show the current job it is adding where the error
   // occurred. it would likely be done in the constructor for
   // SchedulerException.
-  if (desc == "NULL"){
-    cout << "No job inserted: Desc is \"NULL\"" << endl;
+  target >> std::quoted(desc);
+  if (desc == "NULL") {
+    // skip to end of line
+    target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return SchedulerException("No job inserted: Desc is \"NULL\"");
   }
-  if (n_procs == 0){
-    cout << "Failed to insert job, job needs > 0 processors" << endl;
+  target >> n_procs;
+  if (n_procs == 0) {
+    // skip to end of line
+    target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return SchedulerException("Failed to insert job, job needs > 0 processors");
   }
-  if (n_ticks == 0){
-    cout << "Failed to insert job, job needs > 0 ticks" << endl;
+  target >> n_ticks;
+  if (n_ticks == 0) {
+    // skip to end of line
+    target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return SchedulerException("Failed to insert job, job needs > 0 ticks");
   }
+  // skip to end of line
+  target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   return insert_job(n_procs, n_ticks, desc);
 
@@ -144,18 +150,21 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   return indexes;
 }
 
-void JobScheduler::free_proc(const Job &j) noexcept {
+void JobScheduler::free_proc(const std::shared_ptr<Job> &j) noexcept {
   auto job_iter = std::find(running_jobs.begin(), running_jobs.end(), j);
 
   // assume j is in running_jobs
   assert(job_iter != running_jobs.end());
   // assume j is finished
-  assert(j.n_ticks <= 0);
+  assert(j->n_ticks <= 0);
 
-  for (auto i = 0U; i < j.get_n_procs(); i++) {
-    *(std::find_if(processors.begin(), processors.end(),
-                   [&j](auto i) { return i.get() == &j; })) = nullptr;
+  cout << "Job finished: " << *j << endl;
+
+  auto n_procs = j->get_n_procs();
+  for (auto i = 0U; i < n_procs; ++i) {
+    *std::find(processors.begin(), processors.end(), j) = nullptr;
   }
+
   running_jobs.erase(job_iter);
 }
 
@@ -182,20 +191,25 @@ JobScheduler::check_availability(unsigned int procs_needed) noexcept {
 
   Job temp = *new_job;
 
-  cout << "Job finished:" << *new_job << endl;
-
   job_queue.pop();
   return temp;
 }
 
 void JobScheduler::run_job(Job new_job) noexcept {
-  // add to the vector of running jobs
-  running_jobs.push_back(new_job);
+  cout << "Job Started: " << new_job << endl;
 
   // assign processors
   auto available_procs = get_available_processors();
-  auto job = std::make_shared<Job>(std::move(new_job));
+  auto job = std::make_shared<Job>(new_job);
   for (auto i = 0U; i < new_job.get_n_procs(); ++i) {
     processors[available_procs[i]] = job;
   }
+
+  // add to the vector of running jobs
+  running_jobs.push_back(job);
+}
+
+void JobScheduler::decrement_timer() noexcept {
+  for (auto &i : running_jobs)
+    --i->n_ticks;
 }

@@ -5,10 +5,10 @@
 #include "job.hpp"
 
 #include <iostream> // std::istream
+#include <iostream>
 #include <memory>   // std::shared_prt<>
 #include <optional> // std::optional<>
 #include <queue>    // std::priority_queue<>
-#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -47,7 +47,7 @@ private:
 
   [[nodiscard]] std::vector<index> get_available_processors() const noexcept;
 
-  void free_proc(const Job &j) noexcept;
+  void free_proc(const std::shared_ptr<Job> &j) noexcept;
 
   [[nodiscard]] bool
   check_availability(const unsigned int procs_needed) noexcept;
@@ -57,14 +57,13 @@ private:
   [[nodiscard]] Job pop_shortest() noexcept;
   void run_job(Job new_job) noexcept;
 
-  // TODO use in tick()
-  [[maybe_unused]] void decrement_timer() noexcept;
+  void decrement_timer() noexcept;
 
   std::istream *target;     // pointer because of abstraction
   MinHeap<Job> job_queue{}; // waiting to run
-  std::vector<std::shared_ptr<Job>> processors{}; // all processors
-  std::vector<Job> running_jobs{};                // running jobs
+  std::vector<std::shared_ptr<Job>> processors{};   // all processors
+  std::vector<std::shared_ptr<Job>> running_jobs{}; // running jobs
   infinite_iterator<unsigned int> job_counter{1};
-  unsigned int tick_num;
+  unsigned int tick_num{0};
 };
 #endif // ! JOB_SCHEDULER_HPP

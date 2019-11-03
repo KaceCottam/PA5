@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 
+#define N_PROCESSORS 15
+
 /**
  * @brief output to cerr any errors from f
  *
@@ -23,10 +25,11 @@ int main(int argc, char *argv[]) {
   if (argc == 2) {
     auto file = std::ifstream(argv[1]);
 
-    JobScheduler scheduler(file, 10);
+    JobScheduler scheduler(file, N_PROCESSORS);
 
-    while (scheduler.is_running())
+    do {
       log_error([&] { return scheduler.tick(); });
+    } while (scheduler.is_running());
 
   } else {
     std::cout << "Enter a list of jobs, ending with EOF, separating with \\n."
@@ -41,9 +44,10 @@ int main(int argc, char *argv[]) {
       input << next_input << " ";
     }
 
-    JobScheduler scheduler(input, 15);
+    JobScheduler scheduler(input, N_PROCESSORS);
 
-    while (scheduler.is_running())
+    do {
       log_error([&] { return scheduler.tick(); });
+    } while (scheduler.is_running());
   }
 }
