@@ -13,6 +13,7 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
     : target{&target} {
   assert(num_processors > 0);
   processors.resize(num_processors);
+  tick_num = 1;
 }
 
 [[maybe_unused]] void JobScheduler::set_target(std::istream &target) noexcept {
@@ -26,6 +27,10 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
 }
 
 [[nodiscard]] optional<SchedulerException> JobScheduler::tick() noexcept {
+  
+  // Display current tick
+  cout << "Tick Number " << tick_num << endl;
+  
   // prompt and insert new job
   if (auto e = insert_job(get_target()))
     return e;
@@ -47,6 +52,9 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
     } else
       break;
   }
+
+  cout << endl;
+
   return {};
 }
 
@@ -59,12 +67,26 @@ JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
   assert(desc != "NULL");
 
   // Check validity of the job
-  if (n_procs > processors.size())
+  if (n_procs > processors.size()){
+    cout << "Failed to insert job, job needs > 0 processors" << endl;
     return SchedulerException("Failed to Insert Job, job required more "
                               "processors than total processors.");
+  }
+  else if(n_ticks == 0){
+    cout << "Failed to insert job, job needs > 0 ticks" << endl;
+    return SchedulerException("Failed to insert job, job needs > 0 ticks");
+  }
+  else if(desc == "NULL"){
+    cout << "No job inserted: Desc is \"NULL\"" << endl;
+    return SchedulerException("No job inserted: Desc is \"NULL\"");
+  }
+
 
   Job j{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
   job_queue.push(j);
+
+  cout << "Job Started: " << j << endl;
+
   return {};
 
   // We do not say what to output, the rest of the program will do that based on
@@ -88,12 +110,18 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   // we could add something to show the current job it is adding where the error
   // occurred. it would likely be done in the constructor for
   // SchedulerException.
-  if (desc == "NULL")
+  if (desc == "NULL"){
+    cout << "No job inserted: Desc is \"NULL\"" << endl;
     return SchedulerException("No job inserted: Desc is \"NULL\"");
-  if (n_procs == 0)
+  }
+  if (n_procs == 0){
+    cout << "Failed to insert job, job needs > 0 processors" << endl;
     return SchedulerException("Failed to insert job, job needs > 0 processors");
-  if (n_ticks == 0)
+  }
+  if (n_ticks == 0){
+    cout << "Failed to insert job, job needs > 0 ticks" << endl;
     return SchedulerException("Failed to insert job, job needs > 0 ticks");
+  }
 
   return insert_job(n_procs, n_ticks, desc);
 
@@ -153,6 +181,9 @@ JobScheduler::check_availability(unsigned int procs_needed) noexcept {
   assert(new_job);
 
   Job temp = *new_job;
+
+  cout << "Job finished:" << *new_job << endl;
+
   job_queue.pop();
   return temp;
 }

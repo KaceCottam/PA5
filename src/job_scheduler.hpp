@@ -8,6 +8,10 @@
 #include <memory>   // std::shared_prt<>
 #include <optional> // std::optional<>
 #include <queue>    // std::priority_queue<>
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 struct SchedulerException : std::runtime_error {
   template <class... Args> SchedulerException(Args &&... args);
@@ -61,5 +65,6 @@ private:
   std::vector<std::shared_ptr<Job>> processors{}; // all processors
   std::vector<Job> running_jobs{};                // running jobs
   infinite_iterator<unsigned int> job_counter{1};
+  unsigned int tick_num;
 };
 #endif // ! JOB_SCHEDULER_HPP
