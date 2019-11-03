@@ -1,8 +1,14 @@
 #include "job.hpp"
 
+#include <cassert>
+
 Job::Job(unsigned int id, unsigned int n_procs, unsigned int n_ticks,
          const std::string &desc)
-    : n_ticks{n_ticks}, id{id}, n_procs{n_procs}, desc{desc} {}
+    : n_ticks{n_ticks}, id{id}, n_procs{n_procs}, desc{desc} {
+  assert(n_procs > 0);
+  assert(n_ticks > 0);
+  assert(desc != "NULL");
+}
 
 Job::Job(const Job &copy)
     : n_ticks{copy.n_ticks}, id{copy.id}, n_procs{copy.n_procs},
