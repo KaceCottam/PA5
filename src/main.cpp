@@ -22,7 +22,7 @@ template <class Callable> void log_error(Callable &&f) {
  * Test Driver
  */
 int main(int argc, char *argv[]) {
-  if (argc == 2) {
+  if (argc == 2) { // use a file
     auto file = std::ifstream(argv[1]);
 
     JobScheduler scheduler(file, N_PROCESSORS);
@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
       log_error([&] { return scheduler.tick(); });
     } while (scheduler.is_running());
 
-  } else {
+  } else if (argc == 1) { // use stdin
     std::cout << "Enter a list of jobs, ending with EOF, separating with \\n.\n"
-              << "Currently there are " << N_PROCESSORS << " available."
-              << std::endl;
+              << "Currently there are " << N_PROCESSORS
+              << " processors available." << std::endl;
 
     std::stringstream input{};
     std::string next_input{};
@@ -46,12 +46,18 @@ int main(int argc, char *argv[]) {
         break;
       input << next_input << " ";
     }
-    std::clog << input.str();
+    std::cout << "----------" << std::endl;
 
     JobScheduler scheduler(input, N_PROCESSORS);
 
     do {
       log_error([&] { return scheduler.tick(); });
     } while (scheduler.is_running());
+
+  } else {
+    std::cerr << "usage: PA5 [input file]" << std::endl;
+    std::cerr << "where [input file] is optional if you want to take input "
+                 "from stdin."
+              << std::endl;
   }
 }
