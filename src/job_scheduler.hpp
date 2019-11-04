@@ -64,6 +64,5 @@ private:
   std::vector<std::shared_ptr<Job>> processors{};   // all processors
   std::vector<std::shared_ptr<Job>> running_jobs{}; // running jobs
   infinite_iterator<unsigned int> job_counter{1};
-  unsigned int tick_num{0};
 };
 #endif // ! JOB_SCHEDULER_HPP

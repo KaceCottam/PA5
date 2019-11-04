@@ -26,11 +26,17 @@ int main(int argc, char *argv[]) {
     auto file = std::ifstream(argv[1]);
 
     JobScheduler scheduler(file, N_PROCESSORS);
+    unsigned int tick_num{0};
 
     do {
-      log_error([&] { return scheduler.tick(); });
+      log_error([&] {
+        // Display current tick
+        cout << "Tick Number " << tick_num++ << endl;
+        auto retval = scheduler.tick();
+        cout << endl;
+        return retval;
+      });
     } while (scheduler.is_running());
-
   } else if (argc == 1) { // use stdin
     std::cout << "Enter a list of jobs, ending with EOF, separating with \\n.\n"
               << "Currently there are " << N_PROCESSORS
@@ -49,15 +55,24 @@ int main(int argc, char *argv[]) {
     std::cout << "----------" << std::endl;
 
     JobScheduler scheduler(input, N_PROCESSORS);
+    unsigned int tick_num{0};
 
     do {
-      log_error([&] { return scheduler.tick(); });
-    } while (scheduler.is_running());
+      log_error([&] {
+        // Display current tick
+        cout << "Tick Number " << tick_num++ << endl;
+        auto retval = scheduler.tick();
+        cout << endl;
+        return retval;
+      });
 
+    } while (scheduler.is_running());
   } else {
     std::cerr << "usage: PA5 [input file]" << std::endl;
     std::cerr << "where [input file] is optional if you want to take input "
                  "from stdin."
               << std::endl;
+    return EXIT_FAILURE;
   }
+  return EXIT_SUCCESS;
 }

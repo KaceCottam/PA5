@@ -1,9 +1,10 @@
 #include "job_scheduler.hpp"
 
-#include <algorithm> // std::find_if()
-#include <cassert>   // assert()
-#include <iomanip>   // std::quoted()
-#include <utility>   // std::forward()
+#include <algorithm>  // std::find_if()
+#include <cassert>    // assert()
+#include <functional> // std::mem_fn
+#include <iomanip>    // std::quoted()
+#include <utility>    // std::forward()
 
 template <class... Args>
 SchedulerException::SchedulerException(Args &&... args)
@@ -13,7 +14,6 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
     : target{&target} {
   assert(num_processors > 0);
   processors.resize(num_processors);
-  tick_num = 1;
 }
 
 [[maybe_unused]] void JobScheduler::set_target(std::istream &target) noexcept {
@@ -22,44 +22,51 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
 
 [[nodiscard]] bool JobScheduler::is_running() noexcept {
   // if all processors dont have a job (=nullptr), nothing is running
+  // we shall count all the processors with a value 'nullptr', if that is the
+  // size of the vector of processors, none of the processors have a job.
   return std::count_if(processors.begin(), processors.end(), [](auto i) {
            return i.get() == nullptr;
          }) != (int)processors.size();
 }
 
 [[nodiscard]] optional<SchedulerException> JobScheduler::tick() noexcept {
-
-  // Display current tick
-  cout << "Tick Number " << tick_num++ << endl;
+  // the final goal is to return either an exception or the output from the
+  // changes. for now not implemented
 
   optional<SchedulerException> retval;
 
-  // TODO if problem -> doesnt tick!
   // prompt and insert new job
   retval = insert_job(get_target());
 
   decrement_timer();
-  while (true) {
-    auto done_job = std::find_if(running_jobs.begin(), running_jobs.end(),
-                                 [](auto i) { return i->n_ticks <= 0; });
-    if (done_job != running_jobs.end())
-      free_proc(*done_job);
+
+  /*
+   * short function that returns an optional instead of the iterator.
+   * modification of std::find_if()
+   */
+  auto find_if_exists = [](auto container, auto predicate) {
+    auto found = std::find_if(container.begin(), container.end(), predicate);
+    if (found != container.end())
+      return optional<typename decltype(container)::value_type>(*found);
     else
-      break;
+      return optional<typename decltype(container)::value_type>{};
+  };
+
+  // Free processors
+  while (auto done_job = find_if_exists(
+             running_jobs, [](auto i) { return i->n_ticks <= 0; })) {
+    cout << "Job finished: " << **done_job << endl;
+    free_proc(*done_job);
   }
 
   // find next shortest job and see if we can start it
-  while (true) {
-    if (auto next_job = find_shortest()) {
-      if (check_availability(next_job->get_n_procs()))
-        run_job(pop_shortest());
-      else
-        break;
+  while (auto next_job = find_shortest())
+    if (check_availability(next_job->get_n_procs())) {
+      auto new_job = pop_shortest();
+      cout << "Job Started: " << new_job << endl;
+      run_job(new_job);
     } else
       break;
-  }
-
-  cout << endl;
 
   return retval;
 }
@@ -76,20 +83,19 @@ JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
 
   // Check validity of the job
   if (n_procs > processors.size()) {
-    // cout << "Failed to insert job, job needs > 0 processors" << endl;
     return SchedulerException("Failed to Insert Job, job required more "
                               "processors than total processors.");
   } else if (n_ticks == 0) {
-    // cout << "Failed to insert job, job needs > 0 ticks" << endl;
     return SchedulerException("Failed to insert job, job needs > 0 ticks");
   } else if (desc == "NULL") {
-    // cout << "No job inserted: Desc is \"NULL\"" << endl;
     return SchedulerException("No job inserted: Desc is \"NULL\"");
   }
 
   Job j{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
   job_queue.push(j);
 
+  // we can split job insertion and job creation into 2 functions,
+  // then have this cout statement in the tick() function
   cout << "Inserted job: " << j << endl;
 
   return {};
@@ -163,8 +169,6 @@ void JobScheduler::free_proc(const std::shared_ptr<Job> &j) noexcept {
   // assume j is finished
   assert(j->n_ticks <= 0);
 
-  cout << "Job finished: " << *j << endl;
-
   auto n_procs = j->get_n_procs();
   for (auto i = 0U; i < n_procs; ++i) {
     *std::find(processors.begin(), processors.end(), j) = nullptr;
@@ -201,8 +205,6 @@ JobScheduler::check_availability(unsigned int procs_needed) noexcept {
 }
 
 void JobScheduler::run_job(Job new_job) noexcept {
-  cout << "Job Started: " << new_job << endl;
-
   // assign processors
   auto available_procs = get_available_processors();
   auto job = std::make_shared<Job>(new_job);
