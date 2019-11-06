@@ -14,7 +14,7 @@ using std::cout;
 using std::endl;
 
 struct SchedulerException : std::runtime_error {
-  template <class... Args> SchedulerException(Args &&... args);
+  SchedulerException(const std::string &arg);
 };
 
 using std::optional;

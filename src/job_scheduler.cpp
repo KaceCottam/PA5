@@ -6,9 +6,8 @@
 #include <iomanip>    // std::quoted()
 #include <utility>    // std::forward()
 
-template <class... Args>
-SchedulerException::SchedulerException(Args &&... args)
-    : runtime_error{std::forward<Args...>(args)...} {}
+SchedulerException::SchedulerException(const std::string &arg)
+    : runtime_error{arg} {}
 
 JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
     : target{&target} {
