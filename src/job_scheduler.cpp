@@ -33,17 +33,21 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
   // the final goal is to return either an exception or the output from the
   // changes. for now not implemented
 
-  optional<SchedulerException> retval;
+  optional<SchedulerException> retval{};
 
   // prompt and insert new job
   auto read_job_output = read_job(get_target());
   if (read_job_output.index() == 1) {
+    // index == 1 is type of Job
     auto new_job = std::get<1>(read_job_output);
-    auto insert_job(new_job);
-    cout << "Inserted a new job " << new_job << endl;
-  } else {
+    insert_job(new_job);
+    cout << "Inserted a new job: " << new_job << endl;
+  } else if (read_job_output.index() == 0) {
+    // index == 0 is type of SchedulerException
     retval = std::get<0>(read_job_output);
   }
+  // index == 2 is type of std::nullopt_t (EOF reached)
+  // do nothing in this case
 
   decrement_timer();
 
@@ -51,12 +55,14 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
    * short function that returns an optional instead of the iterator.
    * modification of std::find_if()
    */
-  auto find_if_exists = [](auto container, auto predicate) {
+  auto find_if_exists =
+      [](auto container,
+         auto predicate) -> optional<typename decltype(container)::value_type> {
     auto found = std::find_if(container.begin(), container.end(), predicate);
     if (found != container.end())
-      return optional<typename decltype(container)::value_type>(*found);
+      return *found;
     else
-      return optional<typename decltype(container)::value_type>{};
+      return {};
   };
 
   auto number_of_ticks_leq_0 = [](auto i) { return i->n_ticks <= 0; };
@@ -102,11 +108,11 @@ void JobScheduler::insert_job(Job new_job) noexcept {
   job_queue.push(new_job);
 }
 
-[[nodiscard]] std::variant<SchedulerException, Job>
+[[nodiscard]] std::variant<SchedulerException, Job, std::nullopt_t>
 JobScheduler::read_job(std::istream &target) noexcept {
   // in case end of stream
   if (target.eof())
-    return {};
+    return std::nullopt;
 
   std::string desc{};
   unsigned int n_procs, n_ticks;
@@ -118,27 +124,34 @@ JobScheduler::read_job(std::istream &target) noexcept {
   if (desc == "NULL") {
     // skip to end of line
     target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    return SchedulerException("No job inserted: Desc is \"NULL\"");
+    return SchedulerException("No job read: Desc is \"NULL\"");
   }
   if (desc == "") {
-    return {};
+    // skip to end of line
+    target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    return SchedulerException("No job read: Description is empty");
   }
   target >> n_procs;
   if (n_procs == 0) {
     // skip to end of line
     target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    return SchedulerException("Failed to insert job, job needs > 0 processors");
+    return SchedulerException(
+        "Failed to read valid job, job needs > 0 processors");
   }
   target >> n_ticks;
   if (n_ticks == 0) {
     // skip to end of line
     target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    return SchedulerException("Failed to insert job, job needs > 0 ticks");
+    return SchedulerException("Failed to read valid job, job needs > 0 ticks");
   }
   // skip to end of line
   target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-  return create_job(n_procs, n_ticks, desc);
+  auto job = create_job(n_procs, n_ticks, desc);
+  if (job.index() == 0)
+    return std::get<0>(job);
+  else
+    return std::get<1>(job);
 }
 
 [[nodiscard]] std::istream &JobScheduler::get_target() const noexcept {

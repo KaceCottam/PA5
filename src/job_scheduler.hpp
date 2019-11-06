@@ -36,7 +36,7 @@ private:
       std::priority_queue<T, std::vector<T>,
                           std::greater<typename std::vector<T>::value_type>>;
 
-  [[nodiscard]] std::variant<SchedulerException, Job>
+  [[nodiscard]] std::variant<SchedulerException, Job, std::nullopt_t>
   read_job(std::istream &target) noexcept;
 
   [[nodiscard]] std::variant<SchedulerException, Job>
