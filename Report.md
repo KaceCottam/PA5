@@ -23,9 +23,9 @@ Runtime Complexities
 | FindShortest      | O(1)       |
 | DeleteShortest    | O(logn)    |
 | CheckAvailibility | O(1)       |
-| RunJob            | O(n)       |
+| RunJob            | O(1)       |
 | DecrementTimer    | O(n)       |
-| ReleaseProcs      | O(n)       |
+| ReleaseProcs      | O(1)       |
 |-------------------|------------|
 
 ## InsertJob
@@ -41,11 +41,11 @@ Because we are using a minheap, delete the shortest value and percolate
 ## CheckAvailibility
 It just compares values, so O(1)
 ## RunJob
-if a job needs N processors, it needs to visit all processors
+it adds to the end of a vector
 ## DecrementTimer
 Needs to visit all values in running\_jobs
 ## ReleaseProcs
-if a job needs N processors and it finishes, it needs to visit all processors.
+just a subtraction and removal from vector
 
 
 Short-Comings of Shortest-Job-First Strategy
