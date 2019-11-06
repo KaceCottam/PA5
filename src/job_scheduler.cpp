@@ -10,9 +10,8 @@ SchedulerException::SchedulerException(const std::string &arg)
     : runtime_error{arg} {}
 
 JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
-    : target{&target} {
+    : target{&target}, available_processors(num_processors) {
   assert(num_processors > 0);
-  processors.resize(num_processors);
 }
 
 [[maybe_unused]] void JobScheduler::set_target(std::istream &target) noexcept {
@@ -20,13 +19,7 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
 }
 
 [[nodiscard]] bool JobScheduler::is_running() noexcept {
-  // if all processors dont have a job (=nullptr), nothing is running
-  // we shall count all the processors with a value 'nullptr', if that is the
-  // size of the vector of processors, none of the processors have a job.
-  auto proc_nullptr_count =
-      std::count_if(processors.begin(), processors.end(),
-                    [](auto i) { return i.get() == nullptr; });
-  return !target->eof() || proc_nullptr_count != (int)processors.size();
+  return !target->eof() || available_processors != max_processors;
 }
 
 [[nodiscard]] optional<SchedulerException> JobScheduler::tick() noexcept {
@@ -65,11 +58,11 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
       return {};
   };
 
-  auto number_of_ticks_leq_0 = [](auto i) { return i->n_ticks <= 0; };
+  auto number_of_ticks_leq_0 = [](auto i) { return i.n_ticks <= 0; };
 
   // Free processors
   while (auto done_job = find_if_exists(running_jobs, number_of_ticks_leq_0)) {
-    cout << "Job finished: " << **done_job << endl;
+    cout << "Job finished: " << *done_job << endl;
     free_proc(*done_job);
   }
 
@@ -94,7 +87,7 @@ JobScheduler::create_job(unsigned int n_procs, unsigned int n_ticks,
   assert(desc != "NULL");
 
   // Check validity of the job in the
-  if (n_procs > processors.size())
+  if (n_procs > max_processors)
     return SchedulerException("Failed to create Job, job required more "
                               "processors than total processors.");
 
@@ -103,7 +96,7 @@ JobScheduler::create_job(unsigned int n_procs, unsigned int n_ticks,
 
 void JobScheduler::insert_job(Job new_job) noexcept {
   // assume the input is valid
-  assert(new_job.get_n_procs() <= processors.size());
+  assert(new_job.get_n_procs() <= max_processors);
 
   job_queue.push(new_job);
 }
@@ -159,28 +152,20 @@ JobScheduler::read_job(std::istream &target) noexcept {
   return *target;
 }
 
-[[nodiscard]] std::vector<index> JobScheduler::get_available_processors() const
+[[nodiscard]] unsigned int JobScheduler::get_available_processors() const
     noexcept {
-  std::vector<index> indexes;
-  for (auto i = 0U; i < processors.size(); ++i) {
-    if (!processors[i])
-      indexes.push_back(i);
-  }
-  return indexes;
+  return available_processors;
 }
 
-void JobScheduler::free_proc(const std::shared_ptr<Job> &j) noexcept {
+void JobScheduler::free_proc(const Job &j) noexcept {
   auto job_iter = std::find(running_jobs.begin(), running_jobs.end(), j);
 
   // assume j is in running_jobs
   assert(job_iter != running_jobs.end());
   // assume j is finished
-  assert(j->n_ticks <= 0);
+  assert(j.n_ticks <= 0);
 
-  auto n_procs = j->get_n_procs();
-  for (auto i = 0U; i < n_procs; ++i) {
-    *std::find(processors.begin(), processors.end(), j) = nullptr;
-  }
+  available_processors += j.get_n_procs();
 
   running_jobs.erase(job_iter);
 }
@@ -191,7 +176,7 @@ JobScheduler::check_availability(unsigned int procs_needed) noexcept {
   // assume >= 1 procs_needed
   assert(procs_needed > 0);
 
-  return procs_needed <= get_available_processors().size();
+  return procs_needed <= get_available_processors();
 }
 
 [[nodiscard]] optional<Job> JobScheduler::find_shortest() const noexcept {
@@ -215,17 +200,13 @@ JobScheduler::check_availability(unsigned int procs_needed) noexcept {
 
 void JobScheduler::run_job(Job new_job) noexcept {
   // assign processors
-  auto available_procs = get_available_processors();
-  auto job = std::make_shared<Job>(new_job);
-  for (auto i = 0U; i < new_job.get_n_procs(); ++i) {
-    processors[available_procs[i]] = job;
-  }
+  available_processors -= new_job.get_n_procs();
 
   // add to the vector of running jobs
-  running_jobs.push_back(job);
+  running_jobs.push_back(new_job);
 }
 
 void JobScheduler::decrement_timer() noexcept {
   for (auto &i : running_jobs)
-    --i->n_ticks;
+    --i.n_ticks;
 }

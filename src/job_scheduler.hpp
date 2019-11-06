@@ -47,9 +47,9 @@ private:
 
   [[nodiscard]] std::istream &get_target() const noexcept;
 
-  [[nodiscard]] std::vector<index> get_available_processors() const noexcept;
+  [[nodiscard]] unsigned int get_available_processors() const noexcept;
 
-  void free_proc(const std::shared_ptr<Job> &j) noexcept;
+  void free_proc(const Job &j) noexcept;
 
   [[nodiscard]] bool
   check_availability(const unsigned int procs_needed) noexcept;
@@ -61,10 +61,11 @@ private:
 
   void decrement_timer() noexcept;
 
-  std::istream *target;     // pointer because of abstraction
-  MinHeap<Job> job_queue{}; // waiting to run
-  std::vector<std::shared_ptr<Job>> processors{};   // all processors
-  std::vector<std::shared_ptr<Job>> running_jobs{}; // running jobs
+  std::istream *target;              // pointer because of abstraction
+  unsigned int available_processors; // all processors
+  const unsigned int max_processors{available_processors}; // all processors
+  MinHeap<Job> job_queue{};                                // waiting to run
+  std::vector<Job> running_jobs{};                         // running jobs
   infinite_iterator<unsigned int> job_counter{1};
 };
 #endif // ! JOB_SCHEDULER_HPP
