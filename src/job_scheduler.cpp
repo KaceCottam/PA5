@@ -52,9 +52,10 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
       return optional<typename decltype(container)::value_type>{};
   };
 
+  auto number_of_ticks_leq_0 = [](auto i) { return i->n_ticks <= 0; };
+
   // Free processors
-  while (auto done_job = find_if_exists(
-             running_jobs, [](auto i) { return i->n_ticks <= 0; })) {
+  while (auto done_job = find_if_exists(running_jobs, number_of_ticks_leq_0)) {
     cout << "Job finished: " << **done_job << endl;
     free_proc(*done_job);
   }
@@ -94,7 +95,7 @@ JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
   Job j{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
   job_queue.push(j);
 
-  // we can split job insertion and job creation into 2 functions,
+  // TODO we can split job insertion and job creation into 2 functions,
   // then have this cout statement in the tick() function
   cout << "Inserted job: " << j << endl;
 
@@ -177,6 +178,7 @@ void JobScheduler::free_proc(const std::shared_ptr<Job> &j) noexcept {
   running_jobs.erase(job_iter);
 }
 
+// TODO optimize readability by replacing parameter with Job reference
 [[nodiscard]] bool
 JobScheduler::check_availability(unsigned int procs_needed) noexcept {
   // assume >= 1 procs_needed
