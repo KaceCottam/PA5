@@ -23,9 +23,10 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
   // if all processors dont have a job (=nullptr), nothing is running
   // we shall count all the processors with a value 'nullptr', if that is the
   // size of the vector of processors, none of the processors have a job.
-  return std::count_if(processors.begin(), processors.end(), [](auto i) {
-           return i.get() == nullptr;
-         }) != (int)processors.size();
+  auto proc_nullptr_count =
+      std::count_if(processors.begin(), processors.end(),
+                    [](auto i) { return i.get() == nullptr; });
+  return !target->eof() || proc_nullptr_count != (int)processors.size();
 }
 
 [[nodiscard]] optional<SchedulerException> JobScheduler::tick() noexcept {
