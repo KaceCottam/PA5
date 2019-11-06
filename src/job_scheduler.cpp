@@ -36,7 +36,14 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
   optional<SchedulerException> retval;
 
   // prompt and insert new job
-  retval = insert_job(get_target());
+  auto read_job_output = read_job(get_target());
+  if (read_job_output.index() == 1) {
+    auto new_job = std::get<1>(read_job_output);
+    auto insert_job(new_job);
+    cout << "Inserted a new job " << new_job << endl;
+  } else {
+    retval = std::get<0>(read_job_output);
+  }
 
   decrement_timer();
 
@@ -72,41 +79,31 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
   return retval;
 }
 
-[[nodiscard]] optional<SchedulerException>
-JobScheduler::insert_job(unsigned int n_procs, unsigned int n_ticks,
+[[nodiscard]] std::variant<SchedulerException, Job>
+JobScheduler::create_job(unsigned int n_procs, unsigned int n_ticks,
                          const std::string &desc) noexcept {
-  // assume the input is not invalid
+  // assume the input is valid
   assert(n_procs != 0);
   assert(n_ticks != 0);
   assert(desc != "NULL");
 
-  // we have output handled with SchedulerException::what()
-
-  // Check validity of the job
-  if (n_procs > processors.size()) {
-    return SchedulerException("Failed to Insert Job, job required more "
+  // Check validity of the job in the
+  if (n_procs > processors.size())
+    return SchedulerException("Failed to create Job, job required more "
                               "processors than total processors.");
-  } else if (n_ticks == 0) {
-    return SchedulerException("Failed to insert job, job needs > 0 ticks");
-  } else if (desc == "NULL") {
-    return SchedulerException("No job inserted: Desc is \"NULL\"");
-  }
 
-  Job j{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
-  job_queue.push(j);
-
-  // TODO we can split job insertion and job creation into 2 functions,
-  // then have this cout statement in the tick() function
-  cout << "Inserted job: " << j << endl;
-
-  return {};
-
-  // We do not say what to output, the rest of the program will do that based on
-  // the exception or lack of exception
+  return Job{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
 }
 
-[[nodiscard]] optional<SchedulerException>
-JobScheduler::insert_job(std::istream &target) noexcept {
+void JobScheduler::insert_job(Job new_job) noexcept {
+  // assume the input is valid
+  assert(new_job.get_n_procs() <= processors.size());
+
+  job_queue.push(new_job);
+}
+
+[[nodiscard]] std::variant<SchedulerException, Job>
+JobScheduler::read_job(std::istream &target) noexcept {
   // in case end of stream
   if (target.eof())
     return {};
@@ -114,8 +111,8 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   std::string desc{};
   unsigned int n_procs, n_ticks;
 
-  // we could add something to show the current job it is adding where the error
-  // occurred. it would likely be done in the constructor for
+  // we could add something to show the current job it is adding where the
+  // error occurred. it would likely be done in the constructor for
   // SchedulerException.
   target >> std::quoted(desc);
   if (desc == "NULL") {
@@ -141,10 +138,7 @@ JobScheduler::insert_job(std::istream &target) noexcept {
   // skip to end of line
   target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-  return insert_job(n_procs, n_ticks, desc);
-
-  // We do not say what to output, the rest of the program will do that based on
-  // the exception or lack of exception
+  return create_job(n_procs, n_ticks, desc);
 }
 
 [[nodiscard]] std::istream &JobScheduler::get_target() const noexcept {

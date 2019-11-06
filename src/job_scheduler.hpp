@@ -5,10 +5,10 @@
 #include "job.hpp"
 
 #include <iostream> // std::istream
-#include <iostream>
 #include <memory>   // std::shared_prt<>
 #include <optional> // std::optional<>
 #include <queue>    // std::priority_queue<>
+#include <variant>  // std::variant<>
 
 using std::cout;
 using std::endl;
@@ -36,12 +36,14 @@ private:
       std::priority_queue<T, std::vector<T>,
                           std::greater<typename std::vector<T>::value_type>>;
 
-  [[nodiscard]] optional<SchedulerException>
-  insert_job(std::istream &target) noexcept;
+  [[nodiscard]] std::variant<SchedulerException, Job>
+  read_job(std::istream &target) noexcept;
 
-  [[nodiscard]] optional<SchedulerException>
-  insert_job(const unsigned int n_procs, const unsigned int n_ticks,
+  [[nodiscard]] std::variant<SchedulerException, Job>
+  create_job(const unsigned int n_procs, const unsigned int n_ticks,
              const std::string &desc) noexcept;
+
+  void insert_job(Job new_job) noexcept;
 
   [[nodiscard]] std::istream &get_target() const noexcept;
 
