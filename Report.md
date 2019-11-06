@@ -1,7 +1,7 @@
-Kace Cottam (11609561)\
-Maia Whitley (11625970)\
-Programming Assignment 5\
-CPTS223.01
+Kace Cottam (11609561)  
+Maia Whitley (11625970)  
+Programming Assignment 5  
+CPTS223.01  
 
 Programming Assignment 5
 ===
@@ -14,15 +14,32 @@ Scheduler System Design
 Runtime Complexities
 --------------------
 
-| Function           | Complexity |
-|--------------------|------------|
-| InsertJob          |            |
-| FindShortest       |            |
-| DeleteShortest     |            |
-| CheckAvailibility  |            |
-| RunJob             |            |
-| DecrementTimer     |            |
-| ReleaseProcs       |            |
+|-------------------|------------|
+| Function          | Complexity |
+|-------------------|------------|
+| InsertJob         |            |
+| FindShortest      | O(1)       |
+| DeleteShortest    | O(logn)    |
+| CheckAvailibility | O(1)       |
+| RunJob            | O(n)       |
+| DecrementTimer    | O(n)       |
+| ReleaseProcs      | O(n)       |
+|-------------------|------------|
+
+## InsertJob
+## FindShortest
+Because we are using a minheap, the shortest job is the first value.
+## DeleteShortest
+Because we are using a minheap, delete the shortest value and percolate
+## CheckAvailibility
+It just compares values, so O(1)
+## RunJob
+if a job needs N processors, it needs to visit all processors
+## DecrementTimer
+Needs to visit all values in running\_jobs
+## ReleaseProcs
+if a job needs N processors and it finishes, it needs to visit all processors.
+
 
 Short-Comings of Shortest-Job-First Strategy
 --------------------------------------------
