@@ -17,7 +17,9 @@ Runtime Complexities
 |-------------------|------------|
 | Function          | Complexity |
 |-------------------|------------|
-| InsertJob         |            |
+| InsertJob         | O(logn)    |
+| CreateJob         | O(1)       |
+| ReadJob           | O(n)       |
 | FindShortest      | O(1)       |
 | DeleteShortest    | O(logn)    |
 | CheckAvailibility | O(1)       |
@@ -27,6 +29,11 @@ Runtime Complexities
 |-------------------|------------|
 
 ## InsertJob
+Insert into job\_queue
+## CreateJob
+Just makes checks with parameters
+## ReadJob
+Depends on how many characters we have to read or ignore.
 ## FindShortest
 Because we are using a minheap, the shortest job is the first value.
 ## DeleteShortest
