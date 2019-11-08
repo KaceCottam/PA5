@@ -13,20 +13,25 @@
  * @tparam Callable
  * @param f
  */
-template <class Callable>
-void log_error(Callable &&f) {
-  if (auto e = f()) std::cerr << e->what() << std::endl;
+template<class Callable>
+void
+log_error(Callable&& f)
+{
+  if (auto e = f())
+    std::cerr << e->what() << std::endl;
 }
 
 /*
  * Test Driver
  */
-int main(int argc, char *argv[]) {
-  if (argc == 2) {  // use a file
+int
+main(int argc, char* argv[])
+{
+  if (argc == 2) { // use a file
     auto file = std::ifstream(argv[1]);
 
     JobScheduler scheduler(file, N_PROCESSORS);
-    unsigned int tick_num{0};
+    unsigned int tick_num{ 0 };
 
     do {
       log_error([&] {
@@ -37,7 +42,7 @@ int main(int argc, char *argv[]) {
         return retval;
       });
     } while (scheduler.is_running());
-  } else if (argc == 1) {  // use stdin
+  } else if (argc == 1) { // use stdin
     std::cout << "Enter a list of jobs, ending with EOF, separating with \\n.\n"
               << "Currently there are " << N_PROCESSORS
               << " processors available." << std::endl;
@@ -45,15 +50,17 @@ int main(int argc, char *argv[]) {
     std::stringstream input{};
     std::string next_input{};
     while (true) {
-      if (std::cin.peek() == '\n') input << '\n';
+      if (std::cin.peek() == '\n')
+        input << '\n';
       std::cin >> next_input;
-      if (next_input == "EOF") break;
+      if (next_input == "EOF")
+        break;
       input << next_input << " ";
     }
     std::cout << "----------" << std::endl;
 
     JobScheduler scheduler(input, N_PROCESSORS);
-    unsigned int tick_num{0};
+    unsigned int tick_num{ 0 };
 
     do {
       log_error([&] {

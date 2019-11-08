@@ -1,5 +1,8 @@
 {
-  "folders" : [ {"path" : "."} ], "settings" : {
-    "files.associations" : { "optional" : "cpp" }
+  "folders"
+    : [ { "path" : "." } ]
+    , "settings":
+  {
+    "files.associations": { "optional" : "cpp" }
   }
 }

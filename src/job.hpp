@@ -10,8 +10,9 @@
  *
  *        A struct because everything should be visible by default
  */
-class Job {
- public:
+class Job
+{
+public:
   /*
    * @brief constructor
    *
@@ -22,22 +23,24 @@ class Job {
    *
    * @return
    */
-  Job(const unsigned int id, const unsigned int n_procs,
-      const unsigned int n_ticks, const std::string &desc);
+  Job(const unsigned int id,
+      const unsigned int n_procs,
+      const unsigned int n_ticks,
+      const std::string& desc);
 
   /**
    * @brief Copy constructor
    *
    * @param copy
    */
-  Job(const Job &copy);
+  Job(const Job& copy);
 
   /**
    * @brief Move constructor
    *
    * @param other
    */
-  Job(Job &&other);
+  Job(Job&& other);
 
   /**
    * @brief Copy operator
@@ -46,7 +49,7 @@ class Job {
    *
    * @return
    */
-  Job &operator=(const Job &copy) noexcept;
+  Job& operator=(const Job& copy) noexcept;
 
   /**
    * @brief Move operator
@@ -55,7 +58,7 @@ class Job {
    *
    * @return
    */
-  Job &operator=(Job &&move);
+  Job& operator=(Job&& move);
 
   /**
    * @brief Print to ostream operator
@@ -65,24 +68,24 @@ class Job {
    *
    * @return
    */
-  friend std::ostream &operator<<(std::ostream &stream, const Job &job);
+  friend std::ostream& operator<<(std::ostream& stream, const Job& job);
 
   /*
    * Comparison operators
    */
-  friend bool operator<(const Job &lhs, const Job &rhs) noexcept;
-  friend bool operator>(const Job &lhs, const Job &rhs) noexcept;
-  friend bool operator==(const Job &lhs, const Job &rhs) noexcept;
-  friend bool operator>=(const Job &lhs, const Job &rhs) noexcept;
-  friend bool operator<=(const Job &lhs, const Job &rhs) noexcept;
+  friend bool operator<(const Job& lhs, const Job& rhs) noexcept;
+  friend bool operator>(const Job& lhs, const Job& rhs) noexcept;
+  friend bool operator==(const Job& lhs, const Job& rhs) noexcept;
+  friend bool operator>=(const Job& lhs, const Job& rhs) noexcept;
+  friend bool operator<=(const Job& lhs, const Job& rhs) noexcept;
 
   [[nodiscard]] unsigned int get_n_procs() const noexcept;
   unsigned int n_ticks;
 
- private:
+private:
   unsigned int id;
   unsigned int n_procs;
   std::string desc;
 };
 
-#endif  // ! JOB_HPP
+#endif // ! JOB_HPP
