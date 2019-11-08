@@ -11,7 +11,7 @@ SchedulerException::SchedulerException(const std::string& arg)
 {
 }
 
-JobScheduler::JobScheduler(std::istream& target, unsigned int num_processors)
+JobScheduler::JobScheduler(std::istream& target, std::size_t num_processors)
     : target{&target}
     , available_processors(num_processors)
 {
@@ -91,8 +91,8 @@ JobScheduler::JobScheduler(std::istream& target, unsigned int num_processors)
 }
 
 [[nodiscard]] std::variant<SchedulerException, Job> JobScheduler::create_job(
-    unsigned int       n_procs,
-    unsigned int       n_ticks,
+    std::size_t        n_procs,
+    std::size_t        n_ticks,
     const std::string& desc) noexcept
 {
   // assume the input is valid
@@ -105,7 +105,7 @@ JobScheduler::JobScheduler(std::istream& target, unsigned int num_processors)
     return SchedulerException("Failed to create Job, job required more "
                               "processors than total processors.");
 
-  return Job{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
+  return Job{static_cast<std::size_t>(job_counter++), n_procs, n_ticks, desc};
 }
 
 void JobScheduler::insert_job(Job new_job) noexcept
@@ -122,8 +122,8 @@ void JobScheduler::insert_job(Job new_job) noexcept
   // in case end of stream
   if (target.eof()) return std::nullopt;
 
-  std::string  desc{};
-  unsigned int n_procs, n_ticks;
+  std::string desc{};
+  std::size_t n_procs, n_ticks;
 
   // we could add something to show the current job it is adding where the
   // error occurred. it would likely be done in the constructor for
@@ -173,7 +173,7 @@ void JobScheduler::insert_job(Job new_job) noexcept
   return *target;
 }
 
-[[nodiscard]] unsigned int JobScheduler::get_available_processors() const
+[[nodiscard]] std::size_t JobScheduler::get_available_processors() const
     noexcept
 {
   return available_processors;

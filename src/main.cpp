@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
       auto file = std::ifstream(argv[1]);
 
       JobScheduler scheduler(file, N_PROCESSORS);
-      unsigned int tick_num{0};
+      std::size_t  tick_num{0};
 
       do
         {
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
       std::cout << "----------" << std::endl;
 
       JobScheduler scheduler(input, N_PROCESSORS);
-      unsigned int tick_num{0};
+      std::size_t  tick_num{0};
 
       do
         {
