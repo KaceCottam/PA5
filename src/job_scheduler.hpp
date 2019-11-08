@@ -49,11 +49,9 @@ private:
 
   void free_proc(const Job &j) noexcept;
 
-  [[nodiscard]] bool
-  check_availability(const unsigned int procs_needed) noexcept;
+  [[nodiscard]] bool check_availability(const Job &j) noexcept;
 
   [[nodiscard]] optional<Job> find_shortest() const noexcept;
-  [[nodiscard]] bool check_availability(int &procs_needed);
   [[nodiscard]] Job pop_shortest() noexcept;
   void run_job(Job new_job) noexcept;
 

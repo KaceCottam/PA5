@@ -68,7 +68,7 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
 
   // find next shortest job and see if we can start it
   while (auto next_job = find_shortest())
-    if (check_availability(next_job->get_n_procs())) {
+    if (check_availability(*next_job)) {
       auto new_job = pop_shortest();
       cout << "Job Started: " << new_job << endl;
       run_job(new_job);
@@ -171,12 +171,11 @@ void JobScheduler::free_proc(const Job &j) noexcept {
 }
 
 // TODO optimize readability by replacing parameter with Job reference
-[[nodiscard]] bool
-JobScheduler::check_availability(unsigned int procs_needed) noexcept {
+[[nodiscard]] bool JobScheduler::check_availability(const Job &j) noexcept {
   // assume >= 1 procs_needed
-  assert(procs_needed > 0);
+  assert(j.get_n_procs() > 0);
 
-  return procs_needed <= get_available_processors();
+  return j.get_n_procs() <= get_available_processors();
 }
 
 [[nodiscard]] optional<Job> JobScheduler::find_shortest() const noexcept {
