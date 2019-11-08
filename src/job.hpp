@@ -6,7 +6,7 @@
 
 class Job
 {
-public:
+ public:
   Job(const unsigned int id,
       const unsigned int n_procs,
       const unsigned int n_ticks,
@@ -29,12 +29,12 @@ public:
   friend bool operator<=(const Job& lhs, const Job& rhs) noexcept;
 
   [[nodiscard]] unsigned int get_n_procs() const noexcept;
-  unsigned int n_ticks;
+  unsigned int               n_ticks;
 
-private:
+ private:
   unsigned int id;
   unsigned int n_procs;
-  std::string desc;
+  std::string  desc;
 };
 
-#endif // ! JOB_HPP
+#endif  // ! JOB_HPP

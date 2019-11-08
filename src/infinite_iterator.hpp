@@ -1,15 +1,16 @@
 #ifndef INFINITE_ITERATOR_HPP
 #define INFINITE_ITERATOR_HPP
 
-#include <utility> // std::move()
+#include <utility>  // std::move()
 
 template<class Incrementable = int>
 class infinite_iterator
 {
-public:
+ public:
   infinite_iterator(const Incrementable start = 0)
-    : current{ start }
-  {}
+      : current{start}
+  {
+  }
 
   infinite_iterator<Incrementable>& operator++()
   {
@@ -26,14 +27,14 @@ public:
   [[nodiscard]] infinite_iterator<Incrementable> operator++(int)
   {
     auto temp = *this;
-    operator++();
+         operator++();
     return temp;
   }
 
   [[nodiscard]] infinite_iterator<Incrementable> operator--(int)
   {
     auto temp = *this;
-    operator--();
+         operator--();
     return temp;
   }
 
@@ -62,28 +63,30 @@ public:
   [[nodiscard]] explicit operator Incrementable() noexcept { return current; }
 
   infinite_iterator(const infinite_iterator<Incrementable>& copy)
-    : current{ copy.current }
-  {}
+      : current{copy.current}
+  {
+  }
 
   infinite_iterator(infinite_iterator<Incrementable>&& move)
-    : current{ std::move(move.current) }
-  {}
+      : current{std::move(move.current)}
+  {
+  }
 
   infinite_iterator<Incrementable>& operator=(
-    const infinite_iterator<Incrementable>& copy) noexcept
+      const infinite_iterator<Incrementable>& copy) noexcept
   {
     current = copy.current;
     return *this;
   }
 
   infinite_iterator<Incrementable>& operator=(
-    infinite_iterator<Incrementable>&& move)
+      infinite_iterator<Incrementable>&& move)
   {
     current = std::move(move.current);
     return *this;
   }
 
-private:
+ private:
   Incrementable current;
 };
-#endif // ! INFINITE_ITERATOR_HPP
+#endif  // ! INFINITE_ITERATOR_HPP
