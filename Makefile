@@ -46,12 +46,12 @@ help:
 	@printf "%5s %-10s\t-- %s\n" "" "LINKING_ARGS" "options to be used while LINKING"
 	@printf "%5s %-10s\t-- %s\n" "" "DEBUG_COMMAND" "the command to be used when debugging make variables"
 
-tests: ${INCDIR}/catch.hpp ${TEST_BINS}
+tests: ${TEST_BINS}
 
-${TEST_BINDIR}/%: ${TESTDIR}/%.cpp ${SRCDIR}/%.hpp ${SRCDIR}/%.cpp
+${TEST_BINDIR}/%: ${TESTDIR}/%.cpp ${SRCDIR}/%.hpp ${SRCDIR}/%.cpp ${INCDIR}/catch.hpp
 	@mkdir -pv ${TEST_BINDIR}
 	@echo "Linking and Compiling $@ with ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES}..."
-	@${CXX} ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES} -o $@ $^
+	${CXX} ${CXXFLAGS} ${COMPILE_ARGS} ${TEST_INCLUDES} -o $@ $(filter %.cpp, $^)
 	@echo "...Done"
 
 report: ${PANDOC_OUTPUT}
@@ -70,13 +70,13 @@ all: ${TEST_BINS} ${BINDIR}/${EXEC} report
 ${OBJDIR}/%.o: ${SRCDIR}/%.cpp
 	@mkdir -pv ${OBJDIR}
 	@echo "Compiling $@ with ${CXXFLAGS} ${COMPILE_ARGS}..."
-	@${CXX} ${CXXFLAGS} ${COMPILE_ARGS} -c -o $@ $<
+	${CXX} ${CXXFLAGS} ${COMPILE_ARGS} -c -o $@ $<
 	@echo "...Done"
 
 ${BINDIR}/${EXEC}: ${OBJS} ${HEADS}
 	@mkdir -pv ${BINDIR}
 	@echo "Linking $@ with ${CXXFLAGS} ${LINKING_ARGS}..."
-	@${CXX} ${CXXFLAGS} ${LINKING_ARGS} -o $@ $^
+	${CXX} ${CXXFLAGS} ${LINKING_ARGS} -o $@ $(filter-out %.hpp, $^)
 	@echo "...Done"
 
 ${PANDOC_OUTPUT}: Report.md
