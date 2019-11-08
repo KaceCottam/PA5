@@ -1,15 +1,16 @@
 #ifndef INFINITE_ITERATOR_HPP
 #define INFINITE_ITERATOR_HPP
 
-#include <utility> // std::move()
+#include <utility>  // std::move()
 
 /**
  * @brief A smart iterator that allows for infinite iteration
  *
  * @tparam Incrementable must have ++ and -- operators.
  */
-template <class Incrementable = int> class infinite_iterator {
-public:
+template <class Incrementable = int>
+class infinite_iterator {
+ public:
   /**
    * @brief constructor
    *
@@ -136,8 +137,8 @@ public:
    *
    * @return
    */
-  infinite_iterator<Incrementable> &
-  operator=(const infinite_iterator<Incrementable> &copy) noexcept {
+  infinite_iterator<Incrementable> &operator=(
+      const infinite_iterator<Incrementable> &copy) noexcept {
     current = copy.current;
     return *this;
   }
@@ -149,13 +150,13 @@ public:
    *
    * @return
    */
-  infinite_iterator<Incrementable> &
-  operator=(infinite_iterator<Incrementable> &&move) {
+  infinite_iterator<Incrementable> &operator=(
+      infinite_iterator<Incrementable> &&move) {
     current = std::move(move.current);
     return *this;
   }
 
-private:
+ private:
   Incrementable current;
 };
-#endif // ! INFINITE_ITERATOR_HPP
+#endif  // ! INFINITE_ITERATOR_HPP

@@ -11,12 +11,16 @@ Job::Job(unsigned int id, unsigned int n_procs, unsigned int n_ticks,
 }
 
 Job::Job(const Job &copy)
-    : n_ticks{copy.n_ticks}, id{copy.id}, n_procs{copy.n_procs},
+    : n_ticks{copy.n_ticks},
+      id{copy.id},
+      n_procs{copy.n_procs},
       desc{copy.desc} {}
 
 Job::Job(Job &&move)
-    : n_ticks{std::move(move.n_ticks)}, id{std::move(move.id)},
-      n_procs{std::move(move.n_procs)}, desc{std::move(move.desc)} {}
+    : n_ticks{std::move(move.n_ticks)},
+      id{std::move(move.id)},
+      n_procs{std::move(move.n_procs)},
+      desc{std::move(move.desc)} {}
 
 Job &Job::operator=(const Job &copy) noexcept {
   id = copy.id;

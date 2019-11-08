@@ -1,10 +1,10 @@
 #include "job_scheduler.hpp"
 
-#include <algorithm>  // std::find_if()
-#include <cassert>    // assert()
-#include <functional> // std::mem_fn
-#include <iomanip>    // std::quoted()
-#include <utility>    // std::forward()
+#include <algorithm>   // std::find_if()
+#include <cassert>     // assert()
+#include <functional>  // std::mem_fn
+#include <iomanip>     // std::quoted()
+#include <utility>     // std::forward()
 
 SchedulerException::SchedulerException(const std::string &arg)
     : runtime_error{arg} {}
@@ -78,9 +78,9 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
   return retval;
 }
 
-[[nodiscard]] std::variant<SchedulerException, Job>
-JobScheduler::create_job(unsigned int n_procs, unsigned int n_ticks,
-                         const std::string &desc) noexcept {
+[[nodiscard]] std::variant<SchedulerException, Job> JobScheduler::create_job(
+    unsigned int n_procs, unsigned int n_ticks,
+    const std::string &desc) noexcept {
   // assume the input is valid
   assert(n_procs != 0);
   assert(n_ticks != 0);
@@ -88,8 +88,9 @@ JobScheduler::create_job(unsigned int n_procs, unsigned int n_ticks,
 
   // Check validity of the job in the
   if (n_procs > max_processors)
-    return SchedulerException("Failed to create Job, job required more "
-                              "processors than total processors.");
+    return SchedulerException(
+        "Failed to create Job, job required more "
+        "processors than total processors.");
 
   return Job{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
 }
@@ -104,8 +105,7 @@ void JobScheduler::insert_job(Job new_job) noexcept {
 [[nodiscard]] std::variant<SchedulerException, Job, std::nullopt_t>
 JobScheduler::read_job(std::istream &target) noexcept {
   // in case end of stream
-  if (target.eof())
-    return std::nullopt;
+  if (target.eof()) return std::nullopt;
 
   std::string desc{};
   unsigned int n_procs, n_ticks;
@@ -179,8 +179,7 @@ void JobScheduler::free_proc(const Job &j) noexcept {
 }
 
 [[nodiscard]] optional<Job> JobScheduler::find_shortest() const noexcept {
-  if (job_queue.size() == 0)
-    return {};
+  if (job_queue.size() == 0) return {};
   return job_queue.top();
 }
 
@@ -206,6 +205,5 @@ void JobScheduler::run_job(Job new_job) noexcept {
 }
 
 void JobScheduler::decrement_timer() noexcept {
-  for (auto &i : running_jobs)
-    --i.n_ticks;
+  for (auto &i : running_jobs) --i.n_ticks;
 }

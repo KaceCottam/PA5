@@ -11,7 +11,7 @@
  *        A struct because everything should be visible by default
  */
 class Job {
-public:
+ public:
   /*
    * @brief constructor
    *
@@ -79,10 +79,10 @@ public:
   [[nodiscard]] unsigned int get_n_procs() const noexcept;
   unsigned int n_ticks;
 
-private:
+ private:
   unsigned int id;
   unsigned int n_procs;
   std::string desc;
 };
 
-#endif // ! JOB_HPP
+#endif  // ! JOB_HPP
