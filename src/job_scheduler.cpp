@@ -48,9 +48,9 @@ JobScheduler::JobScheduler(std::istream &target, unsigned int num_processors)
    * short function that returns an optional instead of the iterator.
    * modification of std::find_if()
    */
-  auto find_if_exists =
-      [](auto container,
-         auto predicate) -> optional<typename decltype(container)::value_type> {
+  auto find_if_exists = [](
+      auto container,
+      auto predicate) -> optional<typename decltype(container)::value_type> {
     auto found = std::find_if(container.begin(), container.end(), predicate);
     if (found != container.end())
       return *found;
