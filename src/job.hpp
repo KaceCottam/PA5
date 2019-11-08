@@ -7,9 +7,9 @@
 class Job
 {
  public:
-  Job(const unsigned int id,
-      const unsigned int n_procs,
-      const unsigned int n_ticks,
+  Job(const std::size_t  id,
+      const std::size_t  n_procs,
+      const std::size_t  n_ticks,
       const std::string& desc);
 
   Job(const Job& copy);
@@ -28,13 +28,13 @@ class Job
   friend bool operator>=(const Job& lhs, const Job& rhs) noexcept;
   friend bool operator<=(const Job& lhs, const Job& rhs) noexcept;
 
-  [[nodiscard]] unsigned int get_n_procs() const noexcept;
-  unsigned int               n_ticks;
+  std::size_t get_n_procs() const noexcept;
+  std::size_t n_ticks;
 
  private:
-  unsigned int id;
-  unsigned int n_procs;
-  std::string  desc;
+  std::size_t id;
+  std::size_t n_procs;
+  std::string desc;
 };
 
 #endif  // ! JOB_HPP

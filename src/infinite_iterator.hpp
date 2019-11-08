@@ -24,14 +24,14 @@ class infinite_iterator
     return *this;
   }
 
-  [[nodiscard]] infinite_iterator<Incrementable> operator++(int)
+  infinite_iterator<Incrementable> operator++(int)
   {
     auto temp = *this;
          operator++();
     return temp;
   }
 
-  [[nodiscard]] infinite_iterator<Incrementable> operator--(int)
+  infinite_iterator<Incrementable> operator--(int)
   {
     auto temp = *this;
          operator--();
@@ -50,17 +50,14 @@ class infinite_iterator
     return *this;
   }
 
-  [[nodiscard]] Incrementable operator*() const noexcept { return current; }
-  [[nodiscard]] Incrementable operator*() noexcept { return current; }
+  Incrementable operator*() const noexcept { return current; }
+  Incrementable operator*() noexcept { return current; }
 
-  [[nodiscard]] Incrementable* operator->() const noexcept { return &current; }
-  [[nodiscard]] Incrementable* operator->() noexcept { return &current; }
+  Incrementable* operator->() const noexcept { return &current; }
+  Incrementable* operator->() noexcept { return &current; }
 
-  [[nodiscard]] explicit operator Incrementable() const noexcept
-  {
-    return current;
-  }
-  [[nodiscard]] explicit operator Incrementable() noexcept { return current; }
+  explicit operator Incrementable() const noexcept { return current; }
+  explicit operator Incrementable() noexcept { return current; }
 
   infinite_iterator(const infinite_iterator<Incrementable>& copy)
       : current{copy.current}

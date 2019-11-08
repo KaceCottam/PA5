@@ -1,7 +1,6 @@
 #include "job_scheduler.hpp"
 
 #include <algorithm>   // std::find_if()
-#include <cassert>     // assert()
 #include <functional>  // std::mem_fn
 #include <iomanip>     // std::quoted()
 #include <utility>     // std::forward()
@@ -11,24 +10,23 @@ SchedulerException::SchedulerException(const std::string& arg)
 {
 }
 
-JobScheduler::JobScheduler(std::istream& target, unsigned int num_processors)
+JobScheduler::JobScheduler(std::istream& target, std::size_t num_processors)
     : target{&target}
     , available_processors(num_processors)
 {
-  assert(num_processors > 0);
 }
 
-[[maybe_unused]] void JobScheduler::set_target(std::istream& target) noexcept
+void JobScheduler::set_target(std::istream& target) noexcept
 {
   this->target = &target;
 }
 
-[[nodiscard]] bool JobScheduler::is_running() noexcept
+bool JobScheduler::is_running() noexcept
 {
   return !target->eof() || available_processors != max_processors;
 }
 
-[[nodiscard]] optional<SchedulerException> JobScheduler::tick() noexcept
+optional<SchedulerException> JobScheduler::tick() noexcept
 {
   // the final goal is to return either an exception or the output from the
   // changes. for now not implemented
@@ -90,40 +88,29 @@ JobScheduler::JobScheduler(std::istream& target, unsigned int num_processors)
   return retval;
 }
 
-[[nodiscard]] std::variant<SchedulerException, Job> JobScheduler::create_job(
-    unsigned int       n_procs,
-    unsigned int       n_ticks,
+std::variant<SchedulerException, Job> JobScheduler::create_job(
+    std::size_t        n_procs,
+    std::size_t        n_ticks,
     const std::string& desc) noexcept
 {
-  // assume the input is valid
-  assert(n_procs != 0);
-  assert(n_ticks != 0);
-  assert(desc != "NULL");
-
   // Check validity of the job in the
   if (n_procs > max_processors)
     return SchedulerException("Failed to create Job, job required more "
                               "processors than total processors.");
 
-  return Job{static_cast<unsigned int>(job_counter++), n_procs, n_ticks, desc};
+  return Job{static_cast<std::size_t>(job_counter++), n_procs, n_ticks, desc};
 }
 
-void JobScheduler::insert_job(Job new_job) noexcept
-{
-  // assume the input is valid
-  assert(new_job.get_n_procs() <= max_processors);
+void JobScheduler::insert_job(Job new_job) noexcept { job_queue.push(new_job); }
 
-  job_queue.push(new_job);
-}
-
-[[nodiscard]] std::variant<SchedulerException, Job, std::nullopt_t>
-    JobScheduler::read_job(std::istream& target) noexcept
+std::variant<SchedulerException, Job, std::nullopt_t> JobScheduler::read_job(
+    std::istream& target) noexcept
 {
   // in case end of stream
   if (target.eof()) return std::nullopt;
 
-  std::string  desc{};
-  unsigned int n_procs, n_ticks;
+  std::string desc{};
+  std::size_t n_procs, n_ticks;
 
   // we could add something to show the current job it is adding where the
   // error occurred. it would likely be done in the constructor for
@@ -167,14 +154,9 @@ void JobScheduler::insert_job(Job new_job) noexcept
     return std::get<1>(job);
 }
 
-[[nodiscard]] std::istream& JobScheduler::get_target() const noexcept
-{
-  assert(target != nullptr);
-  return *target;
-}
+std::istream& JobScheduler::get_target() const noexcept { return *target; }
 
-[[nodiscard]] unsigned int JobScheduler::get_available_processors() const
-    noexcept
+std::size_t JobScheduler::get_available_processors() const noexcept
 {
   return available_processors;
 }
@@ -183,37 +165,25 @@ void JobScheduler::free_proc(const Job& j) noexcept
 {
   auto job_iter = std::find(running_jobs.begin(), running_jobs.end(), j);
 
-  // assume j is in running_jobs
-  assert(job_iter != running_jobs.end());
-  // assume j is finished
-  assert(j.n_ticks <= 0);
-
   available_processors += j.get_n_procs();
 
   running_jobs.erase(job_iter);
 }
 
-[[nodiscard]] bool JobScheduler::check_availability(const Job& j) noexcept
+bool JobScheduler::check_availability(const Job& j) noexcept
 {
-  // assume >= 1 procs_needed
-  assert(j.get_n_procs() > 0);
-
   return j.get_n_procs() <= get_available_processors();
 }
 
-[[nodiscard]] optional<Job> JobScheduler::find_shortest() const noexcept
+optional<Job> JobScheduler::find_shortest() const noexcept
 {
   if (job_queue.size() == 0) return {};
   return job_queue.top();
 }
 
-[[nodiscard]] Job JobScheduler::pop_shortest() noexcept
+Job JobScheduler::pop_shortest() noexcept
 {
-  // assume job_queue has >= 1 element
-  assert(job_queue.size() > 0);
-  // assume find_shortest() yields a job
   auto new_job = find_shortest();
-  assert(new_job);
 
   Job temp = *new_job;
 

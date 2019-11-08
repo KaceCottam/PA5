@@ -1,20 +1,15 @@
 #include "job.hpp"
 
-#include <cassert>
-
 Job::Job(
-    unsigned int       id,
-    unsigned int       n_procs,
-    unsigned int       n_ticks,
+    std::size_t        id,
+    std::size_t        n_procs,
+    std::size_t        n_ticks,
     const std::string& desc)
     : n_ticks{n_ticks}
     , id{id}
     , n_procs{n_procs}
     , desc{desc}
 {
-  assert(n_procs > 0);
-  assert(n_ticks > 0);
-  assert(desc != "NULL");
 }
 
 Job::Job(const Job& copy)
@@ -78,4 +73,4 @@ bool operator<=(const Job& lhs, const Job& rhs) noexcept
   return lhs.n_ticks <= rhs.n_ticks;
 }
 
-[[nodiscard]] unsigned int Job::get_n_procs() const noexcept { return n_procs; }
+std::size_t Job::get_n_procs() const noexcept { return n_procs; }
