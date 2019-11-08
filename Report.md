@@ -9,14 +9,13 @@ Programming Assignment 5
 Scheduler System Design
 -----------------------
 
-{insert a figure to explain our final design for data structures - I will make it in Powerpoint}
+![](./PA5Figure.png)
 
 Runtime Complexities
 --------------------
 
-|-------------------|------------|
 | Function          | Complexity |
-|-------------------|------------|
+| ----------------- | ---------- |
 | InsertJob         | O(logn)    |
 | CreateJob         | O(1)       |
 | ReadJob           | O(n)       |
@@ -26,26 +25,25 @@ Runtime Complexities
 | RunJob            | O(1)       |
 | DecrementTimer    | O(n)       |
 | ReleaseProcs      | O(1)       |
-|-------------------|------------|
 
-## InsertJob
-Insert into job\_queue
-## CreateJob
-Just makes checks with parameters
-## ReadJob
-Depends on how many characters we have to read or ignore.
-## FindShortest
-Because we are using a minheap, the shortest job is the first value.
-## DeleteShortest
-Because we are using a minheap, delete the shortest value and percolate
-## CheckAvailibility
-It just compares values, so O(1)
-## RunJob
-it adds to the end of a vector
-## DecrementTimer
-Needs to visit all values in running\_jobs
-## ReleaseProcs
-just a subtraction and removal from vector
+InsertJob - Insert into job\_queue
+
+CreateJob - Just makes checks with parameters
+
+ReadJob - Depends on how many characters we have to read or ignore.
+
+FindShortest - Because we are using a minheap, the shortest job is the first value.
+
+DeleteShortest - Because we are using a minheap, delete the shortest value and percolate
+
+CheckAvailibility - It just compares values, so O(1)
+
+RunJob - it adds to the end of a vector
+
+DecrementTimer - Needs to visit all values in running\_jobs
+
+ReleaseProcs - just a subtraction and removal from vector
+
 
 
 Short-Comings of Shortest-Job-First Strategy
