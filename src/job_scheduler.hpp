@@ -19,7 +19,6 @@ struct SchedulerException : std::runtime_error
 };
 
 using std::optional;
-using index = std::size_t;
 
 class JobScheduler
 {
