@@ -11,6 +11,14 @@ Scheduler System Design
 
 ![](./PA5Figure.png)
 
+For the queue of waiting jobs, we used a MinHeap so that it would be efficient to find the next shortest job. The shortest job remains conveniently at the top
+of the heap, so accessing it through top() is in constant time. Deleting this shortest job is in O(logn) to allow for percolation of jobs. 
+
+For the queue of running jobs, we used a vector, allowing us to easily add and remove jobs as well as iterate through the vector to decrement the timer for each job.
+
+To keep track of the available processors, we used an unsigned integer (in the form of std::size_t). When a job is added to the running queue, the number of processors it needs
+is subtracted from the number of available processors, and when it is completed, that number of processors is added back.
+
 Runtime Complexities
 --------------------
 
