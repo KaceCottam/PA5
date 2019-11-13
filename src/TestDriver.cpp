@@ -54,7 +54,8 @@ int do_test_with_file(const char* filename)
  */
 std::stringstream get_input_string()
 {
-  std::cout << "Enter a list of jobs, ending with EOF, separating with \\n.\n"
+  std::cout << "Enter a list of jobs, ending with 'EOF' or 'exit', separating "
+               "with \\n.\n"
             << "Currently there are " << N_PROCESSORS
             << " processors available." << std::endl;
 
@@ -64,7 +65,7 @@ std::stringstream get_input_string()
     {
       if (std::cin.peek() == '\n') input << '\n';
       std::cin >> next_input;
-      if (next_input == "EOF") break;
+      if (next_input == "EOF" || next_input == "exit") break;
       input << next_input << " ";
     }
   std::cout << "----------" << std::endl;

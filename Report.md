@@ -6,6 +6,9 @@ CPTS223.01
 Programming Assignment 5
 ===
 
+Usage: `PA5 [input file]`
+where [input file] is optional if you want to take input from stdin.
+
 Scheduler System Design
 -----------------------
 

@@ -89,7 +89,4 @@ clean:
 	@echo "Removing ${OBJDIR}, ${BINDIR}, ${INCDIR}..."
 	@rm -rf ${OBJDIR} ${BINDIR} ${INCDIR}
 	@echo "...Done"
-	@echo "Removing ${PANDOC_OUTPUT}..."
-	@rm -f ${PANDOC_OUTPUT}
-	@echo "...Done"
 
