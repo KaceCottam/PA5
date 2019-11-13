@@ -52,25 +52,27 @@ int do_test_with_file(const char* filename)
  *
  * @return
  */
-std::stringstream get_input_string()
-{
-  std::cout << "Enter a list of jobs, ending with 'EOF' or 'exit', separating "
-               "with \\n.\n"
-            << "Currently there are " << N_PROCESSORS
-            << " processors available." << std::endl;
-
-  std::stringstream input{};
-  std::string       next_input{};
-  while (true)
-    {
-      if (std::cin.peek() == '\n') input << '\n';
-      std::cin >> next_input;
-      if (next_input == "EOF" || next_input == "exit") break;
-      input << next_input << " ";
-    }
-  std::cout << "----------" << std::endl;
-  return input;
-}
+/*
+ *std::stringstream get_input_string()
+ *{
+ *  std::cout << "Enter a list of jobs, ending with 'EOF' or 'exit', separating
+ *" "with \\n.\n"
+ *            << "Currently there are " << N_PROCESSORS
+ *            << " processors available." << std::endl;
+ *
+ *  std::stringstream input{};
+ *  std::string       next_input{};
+ *  while (true)
+ *    {
+ *      if (std::cin.peek() == '\n') input << '\n';
+ *      std::cin >> next_input;
+ *      if (next_input == "EOF" || next_input == "exit") break;
+ *      input << next_input << " ";
+ *    }
+ *  std::cout << "----------" << std::endl;
+ *  return input;
+ *}
+ */
 
 /**
  * @brief Runs the program on stdin
@@ -79,8 +81,8 @@ std::stringstream get_input_string()
  */
 int do_test_with_stdin()
 {
-  auto         input = get_input_string();
-  JobScheduler scheduler(input, N_PROCESSORS);
+  // auto         input = get_input_string();
+  JobScheduler scheduler(std::cin, N_PROCESSORS);
   std::size_t  tick_num{0};
 
   do
@@ -88,6 +90,12 @@ int do_test_with_stdin()
       log_error([&] {
         // Display current tick
         cout << "Tick Number " << tick_num++ << endl;
+        std::cout << "Enter a job, ending with 'EOF' or 'exit', separating"
+                     "jobs with \\n.\n"
+                  << "Currently there are "
+                  << scheduler.get_available_processors()
+                  << " processors available.\n"
+                  << "----------" << std::endl;
         auto retval = scheduler.tick();
         cout << endl;
         return retval;

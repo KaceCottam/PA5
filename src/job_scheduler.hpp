@@ -34,6 +34,9 @@ class JobScheduler
   // performs actions necessary in each tick
   [[nodiscard]] optional<SchedulerException> tick() noexcept;
 
+  // returns the number of available processors
+  [[nodiscard]] std::size_t get_available_processors() const noexcept;
+
  private:
   template<class T>
   using MinHeap = std::priority_queue<T, std::vector<T>, std::greater<T>>;
@@ -53,9 +56,6 @@ class JobScheduler
 
   // gets target stream
   [[nodiscard]] std::istream& get_target() const noexcept;
-
-  // returns the number of available processors
-  [[nodiscard]] std::size_t get_available_processors() const noexcept;
 
   // puts processors back into the pool of available processors when job is
   // complete
@@ -83,5 +83,6 @@ class JobScheduler
   MinHeap<Job>      job_queue{};                           // waiting to run
   std::vector<Job>  running_jobs{};                        // running jobs
   std::size_t       job_counter{1};                        // for job IDs
+  bool exited{false};  // for telling the program to stop reading jobs
 };
 #endif  // ! JOB_SCHEDULER_HPP

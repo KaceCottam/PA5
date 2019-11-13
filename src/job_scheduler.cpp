@@ -25,7 +25,7 @@ JobScheduler::JobScheduler(std::istream& target, std::size_t num_processors)
 
 [[nodiscard]] bool JobScheduler::is_running() noexcept
 {
-  return !target->eof() || available_processors != max_processors;
+  return !exited || available_processors != max_processors;
 }
 
 [[nodiscard]] optional<SchedulerException> JobScheduler::tick() noexcept
@@ -120,7 +120,8 @@ void JobScheduler::insert_job(Job new_job) noexcept
     JobScheduler::read_job(std::istream& target) noexcept
 {
   // in case end of stream
-  if (target.eof()) return std::nullopt;
+  if (target.eof()) exited = true;
+  if (exited) return std::nullopt;
 
   std::string desc{};
   std::size_t n_procs, n_ticks;
@@ -140,6 +141,11 @@ void JobScheduler::insert_job(Job new_job) noexcept
       // skip to end of line
       target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       return SchedulerException("No job read: Description is empty");
+    }
+  if (desc == "exit" || desc == "EOF")
+    {
+      exited = true;
+      return std::nullopt;
     }
   target >> n_procs;
   if (n_procs == 0)
