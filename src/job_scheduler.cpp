@@ -105,7 +105,7 @@ JobScheduler::JobScheduler(std::istream& target, std::size_t num_processors)
     return SchedulerException("Failed to create Job, job required more "
                               "processors than total processors.");
 
-  return Job{static_cast<std::size_t>(job_counter++), n_procs, n_ticks, desc};
+  return Job{job_counter++, n_procs, n_ticks, desc};
 }
 
 void JobScheduler::insert_job(Job new_job) noexcept
