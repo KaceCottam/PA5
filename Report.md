@@ -67,3 +67,12 @@ continue to be added.
 From a performance standpoint, the shortest-job-first strategy doesn't seem to offer a significant benefit over a 
 first-come-first-serve strategy and adds additional time complexity for jobs to percolate within the priority queue as 
 opposed to jobs simply being added to the end of a regular queue for a first-come-first-serve approach.
+
+On the Use of Optional and Variant Return Statements
+----------------------------------------------------
+We used optional return statements in order for the reader of the code to have a better
+understanding of what the function does; it can return an exception, or it can return nothing.
+We also used variants for returning an exception or returning nothing. That way,
+the reader knows that they must handle the error-- as opposed to a `throw` statement
+where it is not explicitly said that a function can throw an error in the declaration.
+

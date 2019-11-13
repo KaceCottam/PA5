@@ -7,65 +7,101 @@
 
 #define N_PROCESSORS 20
 
+/**
+ * @brief Prints an error if it exists while calling the function f
+ *
+ * @tparam Callable
+ * @param f
+ */
 template<class Callable>
 void log_error(Callable&& f)
 {
   if (auto e = f()) std::cerr << e->what() << std::endl;
 }
 
+/**
+ * @brief runs the program on a provided filename
+ *
+ * @param filename
+ *
+ * @return
+ */
+int do_test_with_file(const char* filename)
+{
+  auto file = std::ifstream(filename);
+
+  JobScheduler scheduler(file, N_PROCESSORS);
+  std::size_t  tick_num{0};
+
+  do
+    {
+      log_error([&] {
+        // Display current tick
+        cout << "Tick Number " << tick_num++ << endl;
+        auto retval = scheduler.tick();
+        cout << endl;
+        return retval;
+      });
+    }
+  while (scheduler.is_running());
+  return EXIT_SUCCESS;
+}
+
+/**
+ * @brief get input stream from user
+ *
+ * @return
+ */
+std::stringstream get_input_string()
+{
+  std::cout << "Enter a list of jobs, ending with EOF, separating with \\n.\n"
+            << "Currently there are " << N_PROCESSORS
+            << " processors available." << std::endl;
+
+  std::stringstream input{};
+  std::string       next_input{};
+  while (true)
+    {
+      if (std::cin.peek() == '\n') input << '\n';
+      std::cin >> next_input;
+      if (next_input == "EOF") break;
+      input << next_input << " ";
+    }
+  std::cout << "----------" << std::endl;
+  return input;
+}
+
+/**
+ * @brief Runs the program on stdin
+ *
+ * @return
+ */
+int do_test_with_stdin()
+{
+  auto         input = get_input_string();
+  JobScheduler scheduler(input, N_PROCESSORS);
+  std::size_t  tick_num{0};
+
+  do
+    {
+      log_error([&] {
+        // Display current tick
+        cout << "Tick Number " << tick_num++ << endl;
+        auto retval = scheduler.tick();
+        cout << endl;
+        return retval;
+      });
+    }
+  while (scheduler.is_running());
+  return EXIT_SUCCESS;
+}
+
 int main(int argc, char* argv[])
 {
-  if (argc == 2)
-    {  // use a file
-      auto file = std::ifstream(argv[1]);
-
-      JobScheduler scheduler(file, N_PROCESSORS);
-      std::size_t  tick_num{0};
-
-      do
-        {
-          log_error([&] {
-            // Display current tick
-            cout << "Tick Number " << tick_num++ << endl;
-            auto retval = scheduler.tick();
-            cout << endl;
-            return retval;
-          });
-        }
-      while (scheduler.is_running());
-    }
+  if (argc == 2) { return do_test_with_file(argv[1]); }
   else if (argc == 1)
-    {  // use stdin
-      std::cout
-          << "Enter a list of jobs, ending with EOF, separating with \\n.\n"
-          << "Currently there are " << N_PROCESSORS << " processors available."
-          << std::endl;
-
-      std::stringstream input{};
-      std::string       next_input{};
-      while (true)
-        {
-          if (std::cin.peek() == '\n') input << '\n';
-          std::cin >> next_input;
-          if (next_input == "EOF") break;
-          input << next_input << " ";
-        }
-      std::cout << "----------" << std::endl;
-
-      JobScheduler scheduler(input, N_PROCESSORS);
-      std::size_t  tick_num{0};
-
-      do
-        {
-          log_error([&] {
-            // Display current tick
-            cout << "Tick Number " << tick_num++ << endl;
-            auto retval = scheduler.tick();
-            cout << endl;
-            return retval;
-          });
-        }
-      while (scheduler.is_running());
+    {
+      return do_test_with_stdin();
     }
   else
     {

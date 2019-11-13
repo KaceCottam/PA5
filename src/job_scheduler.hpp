@@ -7,7 +7,6 @@
 #include <queue>     // std::priority_queue<>
 #include <variant>   // std::variant<>
 
-#include "infinite_iterator.hpp"
 #include "job.hpp"
 
 using std::cout;
@@ -58,7 +57,8 @@ class JobScheduler
   // returns the number of available processors
   [[nodiscard]] std::size_t get_available_processors() const noexcept;
 
-  // puts processors back into the pool of available processors when job is complete
+  // puts processors back into the pool of available processors when job is
+  // complete
   void free_proc(const Job& j) noexcept;
 
   // returns if job can be run with the current number of free processors
@@ -66,21 +66,22 @@ class JobScheduler
 
   // finds the shortest waiting job (top)
   [[nodiscard]] optional<Job> find_shortest() const noexcept;
-  
+
   // pops the shortest job off the priority queue
-  [[nodiscard]] Job           pop_shortest() noexcept;
+  [[nodiscard]] Job pop_shortest() noexcept;
 
   // moves job to the running queue
-  void                        run_job(Job new_job) noexcept;
+  void run_job(Job new_job) noexcept;
 
   // goes through the waiting jobs and decrements their time remaining
   void decrement_timer() noexcept;
 
-  std::istream*     target;                // pointer because of abstraction
-  std::size_t       available_processors;  // number of available processors - using std::size_t for unsigned int
+  std::istream* target;                // pointer because of abstraction
+  std::size_t   available_processors;  // number of available processors - using
+                                       // std::size_t for unsigned int
   const std::size_t max_processors{available_processors};  // all processors
   MinHeap<Job>      job_queue{};                           // waiting to run
   std::vector<Job>  running_jobs{};                        // running jobs
-  infinite_iterator<std::size_t> job_counter{1};           // for job IDs
+  std::size_t       job_counter{1};                        // for job IDs
 };
 #endif  // ! JOB_SCHEDULER_HPP
