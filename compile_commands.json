@@ -8,14 +8,12 @@
             "-Wextra",
             "-Wpedantic",
             "-Werror",
-            "-Iinclude",
-            "-Isrc",
             "-o",
-            "bin/tests/infinite_iterator",
-            "tests/infinite_iterator.cpp"
+            "build/TestDriver.o",
+            "src/TestDriver.cpp"
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "tests/infinite_iterator.cpp"
+        "file": "src/TestDriver.cpp"
     },
     {
         "arguments": [
@@ -30,10 +28,26 @@
             "-Isrc",
             "-o",
             "bin/tests/job",
-            "tests/job.cpp"
+            "src/job.cpp"
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "tests/job.cpp"
+        "file": "src/job.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Wpedantic",
+            "-Werror",
+            "-o",
+            "build/job.o",
+            "src/job.cpp"
+        ],
+        "directory": "/home/kace/Dev/CPTS223/PA5",
+        "file": "src/job.cpp"
     },
     {
         "arguments": [
@@ -60,27 +74,13 @@
             "-Wextra",
             "-Wpedantic",
             "-Werror",
+            "-Iinclude",
+            "-Isrc",
             "-o",
-            "build/main.o",
-            "src/main.cpp"
+            "bin/tests/job",
+            "tests/job.cpp"
         ],
         "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "src/main.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-std=c++17",
-            "-Wall",
-            "-Wextra",
-            "-Wpedantic",
-            "-Werror",
-            "-o",
-            "build/job.o",
-            "src/job.cpp"
-        ],
-        "directory": "/home/kace/Dev/CPTS223/PA5",
-        "file": "src/job.cpp"
+        "file": "tests/job.cpp"
     }
 ]

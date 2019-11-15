@@ -33,8 +33,6 @@ Job::Job(Job&& move)
 {
 }
 
-Job& Job::operator=(const Job& copy) noexcept = default;
-
 Job& Job::operator=(Job&& move)
 {
   id      = move.id;
