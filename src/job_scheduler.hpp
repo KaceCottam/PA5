@@ -52,7 +52,7 @@ class JobScheduler
       const std::string& desc) noexcept;
 
   // inserts job into the priority queue (MinHeap) of waiting jobs
-  void insert_job(Job new_job) noexcept;
+  void insert_job(const Job& new_job) noexcept;
 
   // gets target stream
   [[nodiscard]] std::istream& get_target() const noexcept;
@@ -71,7 +71,7 @@ class JobScheduler
   [[nodiscard]] Job pop_shortest() noexcept;
 
   // moves job to the running queue
-  void run_job(Job new_job) noexcept;
+  void run_job(const Job& new_job) noexcept;
 
   // goes through the waiting jobs and decrements their time remaining
   void decrement_timer() noexcept;

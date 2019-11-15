@@ -26,27 +26,20 @@ Job::Job(const Job& copy)
 }
 
 Job::Job(Job&& move)
-    : n_ticks{std::move(move.n_ticks)}
-    , id{std::move(move.id)}
-    , n_procs{std::move(move.n_procs)}
+    : n_ticks{move.n_ticks}
+    , id{move.id}
+    , n_procs{move.n_procs}
     , desc{std::move(move.desc)}
 {
 }
 
-Job& Job::operator=(const Job& copy) noexcept
-{
-  id      = copy.id;
-  n_procs = copy.n_procs;
-  n_ticks = copy.n_ticks;
-  desc    = copy.desc;
-  return *this;
-}
+Job& Job::operator=(const Job& copy) noexcept = default;
 
 Job& Job::operator=(Job&& move)
 {
-  id      = std::move(move.id);
-  n_procs = std::move(move.n_procs);
-  n_ticks = std::move(move.n_ticks);
+  id      = move.id;
+  n_procs = move.n_procs;
+  n_ticks = move.n_ticks;
   desc    = std::move(move.desc);
   return *this;
 }

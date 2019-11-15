@@ -61,10 +61,8 @@ JobScheduler::JobScheduler(std::istream& target, std::size_t num_processors)
       auto predicate) -> optional<typename decltype(container)::value_type>
   {
     auto found = std::find_if(container.begin(), container.end(), predicate);
-    if (found != container.end())
-      return *found;
-    else
-      return {};
+    if (found != container.end()) { return *found; }
+    return {};
   };
 
   auto number_of_ticks_leq_0 = [](auto i) { return i.n_ticks <= 0; };
@@ -78,14 +76,18 @@ JobScheduler::JobScheduler(std::istream& target, std::size_t num_processors)
 
   // find next shortest job and see if we can start it
   while (auto next_job = find_shortest())
-    if (check_availability(*next_job))
-      {
-        auto new_job = pop_shortest();
-        cout << "Job Started: " << new_job << endl;
-        run_job(new_job);
-      }
-    else
-      break;
+    {
+      if (check_availability(*next_job))
+        {
+          auto new_job = pop_shortest();
+          cout << "Job Started: " << new_job << endl;
+          run_job(new_job);
+        }
+      else
+        {
+          break;
+        }
+    }
 
   return retval;
 }
@@ -102,13 +104,15 @@ JobScheduler::JobScheduler(std::istream& target, std::size_t num_processors)
 
   // Check validity of the job in the
   if (n_procs > max_processors)
-    return SchedulerException("Failed to create Job, job required more "
-                              "processors than total processors.");
+    {
+      return SchedulerException("Failed to create Job, job required more "
+                                "processors than total processors.");
+    }
 
   return Job{job_counter++, n_procs, n_ticks, desc};
 }
 
-void JobScheduler::insert_job(Job new_job) noexcept
+void JobScheduler::insert_job(const Job& new_job) noexcept
 {
   // assume the input is valid
   assert(new_job.get_n_procs() <= max_processors);
@@ -120,8 +124,8 @@ void JobScheduler::insert_job(Job new_job) noexcept
     JobScheduler::read_job(std::istream& target) noexcept
 {
   // in case end of stream
-  if (target.eof()) exited = true;
-  if (exited) return std::nullopt;
+  if (target.eof()) { exited = true; }
+  if (exited) { return std::nullopt; }
 
   std::string desc{};
   std::size_t n_procs, n_ticks;
@@ -136,7 +140,7 @@ void JobScheduler::insert_job(Job new_job) noexcept
       target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       return SchedulerException("No job read: Desc is \"NULL\"");
     }
-  if (desc == "")
+  if (desc.empty())
     {
       // skip to end of line
       target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -167,10 +171,8 @@ void JobScheduler::insert_job(Job new_job) noexcept
   target.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   auto job = create_job(n_procs, n_ticks, desc);
-  if (job.index() == 0)
-    return std::get<0>(job);
-  else
-    return std::get<1>(job);
+  if (job.index() == 0) { return std::get<0>(job); }
+  return std::get<1>(job);
 }
 
 [[nodiscard]] std::istream& JobScheduler::get_target() const noexcept
@@ -209,14 +211,14 @@ void JobScheduler::free_proc(const Job& j) noexcept
 
 [[nodiscard]] optional<Job> JobScheduler::find_shortest() const noexcept
 {
-  if (job_queue.size() == 0) return {};
+  if (job_queue.empty()) { return {}; }
   return job_queue.top();
 }
 
 [[nodiscard]] Job JobScheduler::pop_shortest() noexcept
 {
   // assume job_queue has >= 1 element
-  assert(job_queue.size() > 0);
+  assert(!job_queue.empty());
   // assume find_shortest() yields a job
   auto new_job = find_shortest();
   assert(new_job);
@@ -227,7 +229,7 @@ void JobScheduler::free_proc(const Job& j) noexcept
   return temp;
 }
 
-void JobScheduler::run_job(Job new_job) noexcept
+void JobScheduler::run_job(const Job& new_job) noexcept
 {
   // assign processors
   available_processors -= new_job.get_n_procs();
@@ -238,5 +240,5 @@ void JobScheduler::run_job(Job new_job) noexcept
 
 void JobScheduler::decrement_timer() noexcept
 {
-  for (auto& i : running_jobs) --i.n_ticks;
+  for (auto& i : running_jobs) { --i.n_ticks; }
 }

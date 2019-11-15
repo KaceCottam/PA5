@@ -30,9 +30,9 @@ class Job
   /**
    * @brief Move constructor
    *
-   * @param other
+   * @param move
    */
-  Job(Job&& other);
+  Job(Job&& move);
 
   /**
    * @brief Copy assignment operator
